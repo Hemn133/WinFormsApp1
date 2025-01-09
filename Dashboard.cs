@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +23,22 @@ namespace WinFormsApp1
 
 
 
+        }
+
+        private void RefreshDataGridView()
+        {
+            DB db = new DB();
+            string query = "SELECT * FROM Product"; // Replace with your actual query
+            DataTable dataTable = db.GetDataTable(query);
+            dataGridView1.DataSource = dataTable;
+
+            // Adjust column settings if needed
+            dataGridView1.Columns["ProductID"].Visible = false;
+            dataGridView1.Columns["QuantityAvailable"].HeaderText = "دانە";
+            dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
+            dataGridView1.Columns["PurchasePrice"].HeaderText = "نرخی کڕین";
+            dataGridView1.Columns["SellingPrice"].HeaderText = "نرخی فرۆشتن";
+            ReverseColumnsOrder(dataGridView1);
         }
 
         private void Dashboard_Load(object sender, EventArgs e)
@@ -50,7 +67,6 @@ namespace WinFormsApp1
             ReverseColumnsOrder(dataGridView1);
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
-
         private void ReverseColumnsOrder(DataGridView dataGridView)
         {
             int columnCount = dataGridView.Columns.Count;
@@ -110,6 +126,13 @@ namespace WinFormsApp1
             // Initialize the DB class
             DB db = new DB();
 
+            if (db.DoesProductExist(productName))
+            {
+                MessageBox.Show("ئەم ناوەی کاڵا پێشتر تۆمار کراوە!", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
             // Define the table name and columns
             string tableName = "Product";
             string[] columns = { "ProductName", "PurchasePrice", "SellingPrice", "QuantityAvailable" };
@@ -131,6 +154,10 @@ namespace WinFormsApp1
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+
+
+            RefreshDataGridView();
         }
 
         private void button11_Click(object sender, EventArgs e)
@@ -145,7 +172,7 @@ namespace WinFormsApp1
                 string.IsNullOrEmpty(salePrice) ||
                 string.IsNullOrEmpty(quantity))
             {
-                MessageBox.Show("تکایە زانیاری کاڵای نوێ دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تکایە کاڵا دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -157,8 +184,7 @@ namespace WinFormsApp1
             db.Execute(query);
             MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-
-
+            RefreshDataGridView();
         }
 
         private void button9_Click(object sender, EventArgs e)
@@ -180,11 +206,27 @@ namespace WinFormsApp1
 
             DB db = new DB();
 
-            string query = "UPDATE Product SET ProductName = '" + productName + "', PurchasePrice = '" + purchasePrice + "', SellingPrice = '" + salePrice + "', QuantityAvailable = '" +quantity + "'";
+            string query = "UPDATE Product SET PurchasePrice = @PurchasePrice, SellingPrice = @SellingPrice, QuantityAvailable = @QuantityAvailable WHERE ProductName = @ProductName";
 
-            db.Execute(query);
-            MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // Prepare parameters
+            var parameters = new Dictionary<string, object>
+    {
+        { "@ProductName", productName },
+        { "@PurchasePrice", purchasePrice },
+        { "@SellingPrice", salePrice },
+        { "@QuantityAvailable", quantity }
+    };
 
+            try
+            {
+                db.ExecuteWithParameters(query, parameters);
+                MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RefreshDataGridView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

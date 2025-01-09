@@ -154,7 +154,42 @@ namespace WinFormsApp1
             return dataTable;
         }
 
+        public bool DoesProductExist(string productName)
+        {
+            string query = "SELECT COUNT(*) FROM Product WHERE ProductName = @ProductName";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@ProductName", productName);
+                    connection.Open();
+                    int count = (int)cmd.ExecuteScalar();
+                    return count > 0; // Returns true if the product exists, false otherwise
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return false;
+            }
+        }
 
+        public void ExecuteWithParameters(string query, Dictionary<string, object> parameters)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            using (SqlCommand cmd = new SqlCommand(query, connection))
+            {
+                foreach (var parameter in parameters)
+                {
+                    cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                }
+
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
 
     }
 }
+
