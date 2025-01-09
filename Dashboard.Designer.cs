@@ -31,9 +31,9 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AdminDashboard));
             panel1 = new Panel();
             label7 = new Label();
-            textBox4 = new TextBox();
-            textBox3 = new TextBox();
-            textBox2 = new TextBox();
+            ProductName = new TextBox();
+            SalePrice = new TextBox();
+            PurchasePrice = new TextBox();
             button10 = new Button();
             button9 = new Button();
             button11 = new Button();
@@ -42,7 +42,7 @@
             label5 = new Label();
             label4 = new Label();
             label3 = new Label();
-            textBox1 = new TextBox();
+            Quantity = new TextBox();
             button1 = new Button();
             button2 = new Button();
             button3 = new Button();
@@ -61,9 +61,9 @@
             // 
             panel1.BackColor = Color.WhiteSmoke;
             panel1.Controls.Add(label7);
-            panel1.Controls.Add(textBox4);
-            panel1.Controls.Add(textBox3);
-            panel1.Controls.Add(textBox2);
+            panel1.Controls.Add(ProductName);
+            panel1.Controls.Add(SalePrice);
+            panel1.Controls.Add(PurchasePrice);
             panel1.Controls.Add(button10);
             panel1.Controls.Add(button9);
             panel1.Controls.Add(button11);
@@ -72,7 +72,7 @@
             panel1.Controls.Add(label5);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(label3);
-            panel1.Controls.Add(textBox1);
+            panel1.Controls.Add(Quantity);
             panel1.Location = new Point(477, 199);
             panel1.Name = "panel1";
             panel1.Size = new Size(981, 642);
@@ -90,29 +90,32 @@
             label7.TabIndex = 21;
             label7.Text = "کۆگا";
             // 
-            // textBox4
+            // ProductName
             // 
-            textBox4.Location = new Point(726, 142);
-            textBox4.Multiline = true;
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(250, 33);
-            textBox4.TabIndex = 20;
+            ProductName.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            ProductName.Location = new Point(726, 142);
+            ProductName.Multiline = true;
+            ProductName.Name = "ProductName";
+            ProductName.Size = new Size(250, 33);
+            ProductName.TabIndex = 20;
             // 
-            // textBox3
+            // SalePrice
             // 
-            textBox3.Location = new Point(244, 142);
-            textBox3.Multiline = true;
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(235, 33);
-            textBox3.TabIndex = 19;
+            SalePrice.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            SalePrice.Location = new Point(244, 142);
+            SalePrice.Multiline = true;
+            SalePrice.Name = "SalePrice";
+            SalePrice.Size = new Size(235, 33);
+            SalePrice.TabIndex = 19;
             // 
-            // textBox2
+            // PurchasePrice
             // 
-            textBox2.Location = new Point(485, 142);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(235, 33);
-            textBox2.TabIndex = 18;
+            PurchasePrice.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            PurchasePrice.Location = new Point(485, 142);
+            PurchasePrice.Multiline = true;
+            PurchasePrice.Name = "PurchasePrice";
+            PurchasePrice.Size = new Size(235, 33);
+            PurchasePrice.TabIndex = 18;
             // 
             // button10
             // 
@@ -124,6 +127,7 @@
             button10.TabIndex = 17;
             button10.Text = "زیادکردن";
             button10.UseVisualStyleBackColor = true;
+            button10.Click += button10_Click;
             // 
             // button9
             // 
@@ -135,6 +139,7 @@
             button9.TabIndex = 16;
             button9.Text = "گۆڕانکاری";
             button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
             // 
             // button11
             // 
@@ -146,14 +151,23 @@
             button11.TabIndex = 15;
             button11.Text = "سڕینەوە";
             button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AllowUserToResizeColumns = false;
+            dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(0, 227);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersVisible = false;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(981, 415);
             dataGridView1.TabIndex = 12;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // label6
             // 
@@ -199,13 +213,14 @@
             label3.TabIndex = 8;
             label3.Text = "ناوی کاڵا";
             // 
-            // textBox1
+            // Quantity
             // 
-            textBox1.Location = new Point(3, 142);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(235, 33);
-            textBox1.TabIndex = 3;
+            Quantity.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Quantity.Location = new Point(3, 142);
+            Quantity.Multiline = true;
+            Quantity.Name = "Quantity";
+            Quantity.Size = new Size(235, 33);
+            Quantity.TabIndex = 3;
             // 
             // button1
             // 
@@ -322,7 +337,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Teal;
-            ClientSize = new Size(1931, 985);
+            ClientSize = new Size(1940, 1100);
             Controls.Add(pictureBox1);
             Controls.Add(panel1);
             Controls.Add(button7);
@@ -358,14 +373,14 @@
         private Button button8;
         private PictureBox pictureBox1;
         private Label label3;
-        private TextBox textBox1;
+        private TextBox Quantity;
         private DataGridView dataGridView1;
         private Label label6;
         private Label label5;
         private Label label4;
-        private TextBox textBox4;
-        private TextBox textBox3;
-        private TextBox textBox2;
+        private TextBox ProductName;
+        private TextBox SalePrice;
+        private TextBox PurchasePrice;
         private Button button10;
         private Button button9;
         private Button button11;

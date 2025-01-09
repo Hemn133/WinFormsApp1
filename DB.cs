@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using System.CodeDom.Compiler;
+using System.Data;
 
 namespace WinFormsApp1
 {
@@ -102,7 +103,7 @@ namespace WinFormsApp1
             }
 
             string columnsString = string.Join(", ", columns);
-            string valuesString = string.Join(", ", values.Select(v => $"'{v}'")); // Wrap values with quotes
+            string valuesString = string.Join(", ", values.Select(v => int.TryParse(v, out _) || decimal.TryParse(v, out _) ? v : $"'{v}'"));
             string query = $"INSERT INTO {tableName} ({columnsString}) VALUES ({valuesString})";
 
             try
@@ -130,6 +131,27 @@ namespace WinFormsApp1
             {
                 Console.WriteLine("Error during deletion: " + ex.Message);
             }
+        }
+
+
+        public DataTable GetDataTable(string query)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    // Fill the DataTable with data from the query
+                    adapter.Fill(dataTable);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            return dataTable;
         }
 
 
