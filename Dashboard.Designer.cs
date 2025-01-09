@@ -156,6 +156,7 @@
             button8.Text = "چونەدەرەوە";
             button8.TextAlign = ContentAlignment.MiddleRight;
             button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
             // 
             // pictureBox1
             // 

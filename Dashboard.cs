@@ -128,6 +128,25 @@ namespace WinFormsApp1
             AdminReport adminReport = new AdminReport();
             LoadUserControl(adminReport);
         }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+       "دڵنیایت لە چوونەدەرەوە؟?",
+       "چوونەدەرەوە",
+       MessageBoxButtons.YesNo,
+       MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                // Open the login form
+                Login loginForm = new Login();
+                loginForm.Show();
+
+                // Close the current dashboard form
+                this.Close();
+            }
+        }
     }
 }
 
