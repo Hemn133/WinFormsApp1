@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             label7 = new Label();
-            ProductName = new TextBox();
-            PurchasePrice = new TextBox();
+            CustomerName = new TextBox();
+            Amount = new TextBox();
             button10 = new Button();
             button9 = new Button();
             button11 = new Button();
@@ -52,23 +52,23 @@
             label7.TabIndex = 47;
             label7.Text = "خاوەن قەرزەکان";
             // 
-            // ProductName
+            // CustomerName
             // 
-            ProductName.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ProductName.Location = new Point(729, 140);
-            ProductName.Multiline = true;
-            ProductName.Name = "ProductName";
-            ProductName.Size = new Size(250, 33);
-            ProductName.TabIndex = 46;
+            CustomerName.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            CustomerName.Location = new Point(729, 140);
+            CustomerName.Multiline = true;
+            CustomerName.Name = "CustomerName";
+            CustomerName.Size = new Size(250, 33);
+            CustomerName.TabIndex = 46;
             // 
-            // PurchasePrice
+            // Amount
             // 
-            PurchasePrice.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            PurchasePrice.Location = new Point(6, 140);
-            PurchasePrice.Multiline = true;
-            PurchasePrice.Name = "PurchasePrice";
-            PurchasePrice.Size = new Size(235, 33);
-            PurchasePrice.TabIndex = 44;
+            Amount.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Amount.Location = new Point(6, 140);
+            Amount.Multiline = true;
+            Amount.Name = "Amount";
+            Amount.Size = new Size(235, 33);
+            Amount.TabIndex = 44;
             // 
             // button10
             // 
@@ -92,6 +92,7 @@
             button9.TabIndex = 42;
             button9.Text = "گۆڕانکاری";
             button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
             // 
             // button11
             // 
@@ -103,6 +104,7 @@
             button11.TabIndex = 41;
             button11.Text = "سڕینەوە";
             button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
             // 
             // dataGridView1
             // 
@@ -118,6 +120,7 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(981, 415);
             dataGridView1.TabIndex = 40;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // label5
             // 
@@ -146,8 +149,8 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(label7);
-            Controls.Add(ProductName);
-            Controls.Add(PurchasePrice);
+            Controls.Add(CustomerName);
+            Controls.Add(Amount);
             Controls.Add(button10);
             Controls.Add(button9);
             Controls.Add(button11);
@@ -156,6 +159,7 @@
             Controls.Add(label3);
             Name = "CustomerAdmin";
             Size = new Size(986, 642);
+            Load += CustomerAdmin_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -164,8 +168,8 @@
         #endregion
 
         private Label label7;
-        private TextBox ProductName;
-        private TextBox PurchasePrice;
+        private TextBox CustomerName;
+        private TextBox Amount;
         private Button button10;
         private Button button9;
         private Button button11;
