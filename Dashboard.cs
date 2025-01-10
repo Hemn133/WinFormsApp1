@@ -37,7 +37,7 @@ namespace WinFormsApp1
         private void Dashboard_Load(object sender, EventArgs e)
         {
             AdjustUIForRole();
-            ProductAdmin categoryAControl = new ProductAdmin();
+            AdminSelling categoryAControl = new AdminSelling();
             LoadUserControl(categoryAControl);
         }
         private void AdjustUIForRole()

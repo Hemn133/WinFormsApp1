@@ -60,7 +60,7 @@
             button1.ForeColor = Color.Teal;
             button1.Image = (Image)resources.GetObject("button1.Image");
             button1.ImageAlign = ContentAlignment.MiddleLeft;
-            button1.Location = new Point(17, 92);
+            button1.Location = new Point(16, 226);
             button1.Name = "button1";
             button1.Size = new Size(243, 61);
             button1.TabIndex = 4;
@@ -73,7 +73,7 @@
             // 
             button2.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button2.ForeColor = Color.Teal;
-            button2.Location = new Point(17, 159);
+            button2.Location = new Point(16, 92);
             button2.Name = "button2";
             button2.Size = new Size(243, 61);
             button2.TabIndex = 5;
@@ -86,7 +86,7 @@
             // 
             button3.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button3.ForeColor = Color.Teal;
-            button3.Location = new Point(17, 226);
+            button3.Location = new Point(16, 159);
             button3.Name = "button3";
             button3.Size = new Size(243, 61);
             button3.TabIndex = 6;
@@ -125,7 +125,7 @@
             // 
             button6.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button6.ForeColor = Color.Teal;
-            button6.Location = new Point(17, 427);
+            button6.Location = new Point(16, 496);
             button6.Name = "button6";
             button6.Size = new Size(243, 61);
             button6.TabIndex = 9;
@@ -138,7 +138,7 @@
             // 
             button7.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button7.ForeColor = Color.Teal;
-            button7.Location = new Point(17, 494);
+            button7.Location = new Point(16, 428);
             button7.Name = "button7";
             button7.Size = new Size(243, 61);
             button7.TabIndex = 10;
@@ -151,7 +151,7 @@
             // 
             button8.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button8.ForeColor = Color.Red;
-            button8.Location = new Point(17, 584);
+            button8.Location = new Point(19, 958);
             button8.Name = "button8";
             button8.Size = new Size(243, 61);
             button8.TabIndex = 11;
@@ -183,7 +183,7 @@
             panel2.Controls.Add(button2);
             panel2.Location = new Point(1658, 23);
             panel2.Name = "panel2";
-            panel2.Size = new Size(262, 653);
+            panel2.Size = new Size(262, 1032);
             panel2.TabIndex = 13;
             // 
             // AdminDashboard
