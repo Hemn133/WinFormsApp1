@@ -36,7 +36,7 @@ namespace WinFormsApp1
             dataGridView1.Columns["ExpenseDate"].HeaderText = "بەروار";
 
             dataGridView1.Columns["Amount"].HeaderText = "بڕی خەرجی";
-
+            dateTimePicker1.Text = dateTimePicker1.Text = DateTime.Now.ToString("");
 
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal

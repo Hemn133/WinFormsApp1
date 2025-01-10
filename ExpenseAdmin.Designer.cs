@@ -39,6 +39,7 @@
             label3 = new Label();
             ExpenseDate = new TextBox();
             Label33 = new Label();
+            dateTimePicker1 = new DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -148,7 +149,7 @@
             // ExpenseDate
             // 
             ExpenseDate.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ExpenseDate.Location = new Point(407, 141);
+            ExpenseDate.Location = new Point(633, 23);
             ExpenseDate.Multiline = true;
             ExpenseDate.Name = "ExpenseDate";
             ExpenseDate.Size = new Size(316, 33);
@@ -165,10 +166,19 @@
             Label33.TabIndex = 57;
             Label33.Text = "بەروار";
             // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker1.Location = new Point(407, 141);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(316, 33);
+            dateTimePicker1.TabIndex = 59;
+            // 
             // ExpenseAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(dateTimePicker1);
             Controls.Add(ExpenseDate);
             Controls.Add(Label33);
             Controls.Add(label7);
@@ -201,5 +211,6 @@
         private Label label3;
         private TextBox ExpenseDate;
         private Label Label33;
+        private DateTimePicker dateTimePicker1;
     }
 }

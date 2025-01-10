@@ -78,8 +78,8 @@ namespace WinFormsApp1
 
             // Adjust column settings if needed
             dataGridView1.Columns["CustomerID"].Visible = false;
-            dataGridView1.Columns["CustomerName"].HeaderText = "دانە";
-            dataGridView1.Columns["TotalDebt"].HeaderText = "ناوی کاڵا";
+            dataGridView1.Columns["CustomerName"].HeaderText = "ناوی خاوەن قەرز";
+            dataGridView1.Columns["TotalDebt"].HeaderText = "بڕی قەرز";
             ReverseColumnsOrder(dataGridView1);
         }
 
@@ -95,8 +95,8 @@ namespace WinFormsApp1
             dataGridView1.DataSource = dataTable; // Replace 'dataGridView1' with the name of your DataGridView
 
             dataGridView1.Columns["CustomerID"].Visible = false;
-            dataGridView1.Columns["CustomerName"].HeaderText = "ناو";
-            dataGridView1.Columns["TotalDebt"].HeaderText = "بڕی پارە";
+            dataGridView1.Columns["CustomerName"].HeaderText = "ناوی خاوەن قەرز";
+            dataGridView1.Columns["TotalDebt"].HeaderText = "بڕی قەرز";
 
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal

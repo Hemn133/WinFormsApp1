@@ -210,6 +210,12 @@ namespace WinFormsApp1
             db.Execute(query);
             MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+
+            ProductName.Clear();
+            PurchasePrice.Clear();
+            SalePrice.Clear();
+            Quantity.Clear();
+
             RefreshDataGridView();
         }
 
