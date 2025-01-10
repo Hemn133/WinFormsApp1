@@ -134,6 +134,40 @@ namespace WinFormsApp1
         }
 
 
+
+        public DataTable GetDataTable(string query, Dictionary<string, object> parameters)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlCommand cmd = new SqlCommand(query, connection))
+                {
+                    // Add the parameters to the command
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.AddWithValue(param.Key, param.Value);
+                    }
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        // Fill the DataTable with data from the query
+                        adapter.Fill(dataTable);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            return dataTable;
+        }
+
+
+
+
+
+
         public DataTable GetDataTable(string query)
         {
             DataTable dataTable = new DataTable();

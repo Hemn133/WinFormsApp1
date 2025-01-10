@@ -31,7 +31,6 @@
             label7 = new Label();
             DatePaid = new TextBox();
             button10 = new Button();
-            button9 = new Button();
             button11 = new Button();
             dataGridView1 = new DataGridView();
             label5 = new Label();
@@ -74,18 +73,6 @@
             button10.Text = "زیادکردن";
             button10.UseVisualStyleBackColor = true;
             button10.Click += button10_Click;
-            // 
-            // button9
-            // 
-            button9.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            button9.ForeColor = Color.Teal;
-            button9.Location = new Point(291, 185);
-            button9.Name = "button9";
-            button9.Size = new Size(346, 35);
-            button9.TabIndex = 52;
-            button9.Text = "گۆڕانکاری";
-            button9.UseVisualStyleBackColor = true;
-            button9.Click += button9_Click;
             // 
             // button11
             // 
@@ -176,7 +163,6 @@
             Controls.Add(label7);
             Controls.Add(DatePaid);
             Controls.Add(button10);
-            Controls.Add(button9);
             Controls.Add(button11);
             Controls.Add(dataGridView1);
             Controls.Add(label5);
@@ -194,7 +180,6 @@
         private Label label7;
         private TextBox DatePaid;
         private Button button10;
-        private Button button9;
         private Button button11;
         private DataGridView dataGridView1;
         private Label label5;

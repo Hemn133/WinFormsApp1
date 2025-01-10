@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WinFormsApp1
 {
@@ -30,21 +31,24 @@ namespace WinFormsApp1
 
             // Query to load the debt settlement data into the DataGridView
             string settlementQuery = @"
-        SELECT 
-    ds.DebtSettlementID, 
-    c.CustomerName, 
-    ds.AmountPaid, 
-    ds.PaymentDate
-FROM DebtSettlement ds
-JOIN Customer c ON ds.CustomerID = c.CustomerID";
+    SELECT 
+        ds.DebtSettlementID,      -- From DebtSettlement
+        c.CustomerID,             -- From Customer
+        c.CustomerName,           -- From Customer
+        ds.AmountPaid,            -- From DebtSettlement
+        ds.PaymentDate            -- From DebtSettlement
+    FROM DebtSettlement ds
+    JOIN Customer c ON ds.CustomerID = c.CustomerID";
 
             DataTable settlementData = db.GetDataTable(settlementQuery);
             dataGridView1.DataSource = settlementData; // Bind the data to the DataGridView
 
+
             dataGridView1.Columns["CustomerName"].HeaderText = "ناوی خاوەن قەرز";  // Renaming column to "Customer Name"
             dataGridView1.Columns["AmountPaid"].HeaderText = "بڕی پارەدان";  // Renaming column to "Amount Paid"
             dataGridView1.Columns["PaymentDate"].HeaderText = "بەرواری پارەدان";  // Renaming column to "Payment Date"
-
+            dataGridView1.Columns["DebtSettlementID"].Visible = false;
+            dataGridView1.Columns["CustomerID"].Visible = false; // Hide the column
 
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
@@ -153,13 +157,87 @@ JOIN Customer c ON ds.CustomerID = c.CustomerID";
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // Ensure the user clicked a valid row and not the header
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
+                // Assign values to controls
+                CustomerName.SelectedValue = row.Cells["CustomerID"].Value; // Bind the ComboBox
+                AmountPaid.Text = row.Cells["AmountPaid"].Value.ToString();
+                DatePaid.Text = row.Cells["PaymentDate"].Value.ToString(); // DateTimePicker
+            }
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a row to update.", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            // Get the DebtSettlementID from the selected row
+            int settlementId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["DebtSettlementID"].Value);
+
+            // Get updated values from textboxes and controls
+            string customerName = CustomerName.Text.Trim();
+            string amountPaidText = AmountPaid.Text.Trim();
+            string paymentDate = DatePaid.Text.Trim(); // Assuming PaymentDate is a DateTimePicker
+
+            // Validate input
+            if (string.IsNullOrEmpty(customerName) || string.IsNullOrEmpty(amountPaidText))
+            {
+                MessageBox.Show("Please fill all fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!decimal.TryParse(amountPaidText, out decimal newAmountPaid) || newAmountPaid < 0)
+            {
+                MessageBox.Show("Invalid amount entered. Please enter a valid positive number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Initialize DB class
+            DB db = new DB();
+
+            try
+            {
+                // Update the DebtSettlement table
+                string updateSettlementQuery = @"
+            UPDATE DebtSettlement 
+            SET AmountPaid = @NewAmount, PaymentDate = @PaymentDate 
+            WHERE DebtSettlementID = @SettlementID";
+                Dictionary<string, object> updateParams = new Dictionary<string, object>
+        {
+            { "@NewAmount", newAmountPaid },
+            { "@PaymentDate", paymentDate },
+            { "@SettlementID", settlementId }
+        };
+                db.ExecuteWithParameters(updateSettlementQuery, updateParams);
+
+                // Refresh the DataGridView to reflect changes
+                RefreshDataGridView();
+
+                // Show success message
+                MessageBox.Show("Debt settlement updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                // Handle errors
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+
+
+
+
+
+
+
+
+
 
         private void button11_Click(object sender, EventArgs e)
         {
@@ -217,6 +295,20 @@ JOIN Customer c ON ds.CustomerID = c.CustomerID";
                 MessageBox.Show("Debt settlement deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         private void RefreshDataGridView()
         {
