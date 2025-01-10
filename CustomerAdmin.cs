@@ -39,7 +39,7 @@ namespace WinFormsApp1
 
             if (db.DoesProductExist(customername))
             {
-                MessageBox.Show("ئەم ناوەی کاڵا پێشتر تۆمار کراوە!", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("ئەم ناوە پێشتر تۆمار کراوە!", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

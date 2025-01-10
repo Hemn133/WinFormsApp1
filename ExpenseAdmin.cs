@@ -16,5 +16,120 @@ namespace WinFormsApp1
         {
             InitializeComponent();
         }
+
+        private void ExpenseAdmin_Load(object sender, EventArgs e)
+        {
+            DB db = new DB(); // Create an instance of the DB class
+            string query = "SELECT * FROM Expenses"; // Replace with your actual query
+
+            // Retrieve data using the DB class
+            DataTable dataTable = db.GetDataTable(query);
+
+            // Bind the DataTable to the DataGridView
+            dataGridView1.DataSource = dataTable; // Replace 'dataGridView1' with the name of your DataGridView
+
+            dataGridView1.Columns["ExpenseID"].Visible = false;
+            dataGridView1.Columns["UserAccountID"].Visible = false;
+
+
+            dataGridView1.Columns["Description"].HeaderText = "مەبەست";
+            dataGridView1.Columns["ExpenseDate"].HeaderText = "بەروار";
+
+            dataGridView1.Columns["Amount"].HeaderText = "بڕی خەرجی";
+
+
+            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
+            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
+            dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            dataGridView1.RowTemplate.Height = 40;
+            dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridView1.EnableHeadersVisualStyles = false;
+
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray;
+            dataGridView1.RowsDefaultCellStyle.BackColor = Color.White;
+            dataGridView1.BorderStyle = BorderStyle.Fixed3D;
+            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dataGridView1.GridColor = Color.Gray;
+            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
+            dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
+            ExpenseDate.Text = DateTime.Now.ToString("d");
+
+        }
+
+
+        private void ReverseColumnsOrder(DataGridView dataGridView)
+        {
+            int columnCount = dataGridView.Columns.Count;
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                dataGridView.Columns[i].DisplayIndex = columnCount - 1 - i;
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            string expenseDate = ExpenseDate.Text.Trim();
+            string description = Description.Text.Trim();
+            string amount = ExpenseAmount.Text.Trim();
+
+
+            // Validate input
+            if (string.IsNullOrEmpty(expenseDate) ||
+                string.IsNullOrEmpty(description))
+
+
+            {
+                MessageBox.Show("تکایە زانیاری کاڵای نوێ دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Initialize the DB class
+            DB db = new DB();
+
+
+            // Define the table name and columns
+            string tableName = "Expenses";
+            string[] columns = { "UserAccountID", "ExpenseDate", "Description", "Amount" };
+            string[] values = { "1", expenseDate, description, amount };
+
+            // Call the CreateByParameters method
+            try
+            {
+                db.CreateByParameters(tableName, columns, values);
+                MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Clear the textboxes
+                Description.Clear();
+                ExpenseAmount.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            RefreshDataGridView();
+        }
+
+
+
+        private void RefreshDataGridView()
+        {
+            DB db = new DB();
+            string query = "SELECT * FROM Expenses"; // Replace with your actual query
+            DataTable dataTable = db.GetDataTable(query);
+            dataGridView1.DataSource = dataTable;
+
+            // Adjust column settings if needed
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
