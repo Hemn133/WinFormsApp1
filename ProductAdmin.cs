@@ -45,7 +45,7 @@ namespace WinFormsApp1
 
             // Bind the DataTable to the DataGridView
             dataGridView1.DataSource = dataTable; // Replace 'dataGridView1' with the name of your DataGridView
-
+         
             dataGridView1.Columns["ProductID"].Visible = false;
             dataGridView1.Columns["QuantityAvailable"].HeaderText = "دانە";
             dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
@@ -80,9 +80,10 @@ namespace WinFormsApp1
                 dataGridView.Columns[i].DisplayIndex = columnCount - 1 - i;
             }
         }
-
+        private int selectedProductID;
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            selectedProductID = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["ProductID"].Value); // Store ProductID
             ProductName.Text = dataGridView1.SelectedRows[0].Cells[1].Value.ToString();
             PurchasePrice.Text = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
             SalePrice.Text = dataGridView1.SelectedRows[0].Cells[3].Value.ToString();
@@ -149,18 +150,19 @@ namespace WinFormsApp1
             string quantity = Quantity.Text.Trim();
 
             // Validate input
-            if (string.IsNullOrEmpty(productName) ||
-                string.IsNullOrEmpty(purchasePrice) ||
-                string.IsNullOrEmpty(salePrice) ||
-                string.IsNullOrEmpty(quantity))
+            if (selectedProductID <= 0 || string.IsNullOrEmpty(productName) ||
+        string.IsNullOrEmpty(purchasePrice) ||
+        string.IsNullOrEmpty(salePrice) ||
+        string.IsNullOrEmpty(quantity))
             {
                 MessageBox.Show("تکایە کاڵا دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
+
             DB db = new DB();
 
-            string query = "UPDATE Product SET PurchasePrice = @PurchasePrice, SellingPrice = @SellingPrice, QuantityAvailable = @QuantityAvailable WHERE ProductName = @ProductName";
+            string query = "UPDATE Product SET ProductName = @ProductName, PurchasePrice = @PurchasePrice, SellingPrice = @SellingPrice, QuantityAvailable = @QuantityAvailable WHERE ProductID = @ProductID";
 
             // Prepare parameters
             var parameters = new Dictionary<string, object>
@@ -168,7 +170,8 @@ namespace WinFormsApp1
         { "@ProductName", productName },
         { "@PurchasePrice", purchasePrice },
         { "@SellingPrice", salePrice },
-        { "@QuantityAvailable", quantity }
+        { "@QuantityAvailable", quantity },
+                { "@ProductID", selectedProductID }
     };
 
             try
