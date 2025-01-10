@@ -121,6 +121,7 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(981, 415);
             dataGridView1.TabIndex = 50;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // Label34
             // 

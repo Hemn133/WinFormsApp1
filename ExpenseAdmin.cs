@@ -129,7 +129,44 @@ namespace WinFormsApp1
 
         private void button11_Click(object sender, EventArgs e)
         {
-            
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                // Get the selected row
+                DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
+
+                // Retrieve the hidden ExpenseID from the selected row
+                int expenseId = Convert.ToInt32(selectedRow.Cells["ExpenseID"].Value);
+
+                // Initialize the DB class
+                DB db = new DB();
+
+                // Delete the record using ExpenseID
+                try
+                {
+                    db.DeleteById("Expenses", "ExpenseID", expenseId);
+
+                    // Refresh the DataGridView after deletion
+                    RefreshDataGridView();
+
+                    MessageBox.Show("The expense record has been successfully deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while deleting the record: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a row to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            ExpenseAmount.Text = dataGridView1.SelectedRows[0].Cells[4].Value.ToString();
+            ExpenseDate.Text = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
+            Description.Text = dataGridView1.SelectedRows[0].Cells[3].Value.ToString();
         }
     }
 }

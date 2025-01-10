@@ -137,24 +137,39 @@ namespace WinFormsApp1
 
         private void button11_Click(object sender, EventArgs e)
         {
-            string customername = CustomerName.Text.Trim();
-            string amount = Amount.Text.Trim();
-
-
-            if (string.IsNullOrEmpty(customername) ||
-                string.IsNullOrEmpty(amount))
+            // Delete selected customer
+            if (dataGridView1.SelectedRows.Count == 0)
             {
-                MessageBox.Show("تکایە ناوی خاوەن قەرز دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تکایە کەسێک هەڵبژێرە بۆ سڕینەوە", "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
+            DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
+            string customerName = selectedRow.Cells["CustomerName"].Value.ToString();
+
             DB db = new DB();
 
-            string query = "DELETE FROM Customer WHERE CustomerName = '" + CustomerName.Text + "'";
+            string query = "DELETE FROM Customer WHERE CustomerName = @CustomerName";
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "@CustomerName", customerName }
+            };
+
+            try
+            {
+                db.ExecuteWithParameters(query, parameters);
+                MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
-            db.Execute(query);
-            MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
+            catch (Exception ex)
+            { MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+
+
+
+            
 
             RefreshDataGridView();
 
@@ -165,12 +180,21 @@ namespace WinFormsApp1
 
         private void button9_Click(object sender, EventArgs e)
         {
-            string customername = CustomerName.Text.Trim();
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("تکایە کەسێک هەڵبژێرە بۆ گۆڕین", "Selection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
+            string originalCustomerName = selectedRow.Cells["CustomerName"].Value.ToString();
+            string newCustomerName = CustomerName.Text.Trim();
             string amount = Amount.Text.Trim();
-          
+
+
 
             // Validate input
-            if (string.IsNullOrEmpty(customername) ||
+            if (string.IsNullOrEmpty(newCustomerName) ||
                 string.IsNullOrEmpty(amount))
             {
                 MessageBox.Show("تکایە ناوی خاوەن قەرز دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -178,15 +202,16 @@ namespace WinFormsApp1
             }
             DB db = new DB();
 
-            string query = "UPDATE Customer SET CustomerName = @CustomerName, TotalDebt = @TotalDebt WHERE CustomerName = @CustomerName";
+            string query = "UPDATE Customer SET CustomerName = @NewCustomerName, TotalDebt = @TotalDebt WHERE CustomerName = @OriginalCustomerName";
 
             // Prepare parameters
             var parameters = new Dictionary<string, object>
-    {
-        { "@CustomerName", customername },
-        { "@TotalDebt", amount },
-       
-    };
+            {
+                { "@NewCustomerName", newCustomerName },
+                { "@TotalDebt", amount },
+                { "@OriginalCustomerName", originalCustomerName }
+            };
+
             try
             {
                 db.ExecuteWithParameters(query, parameters);
