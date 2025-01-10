@@ -56,7 +56,7 @@ namespace WinFormsApp1
             dataGridView1.GridColor = Color.Gray;
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
-            ExpenseDate.Text = DateTime.Now.ToString("d");
+            
 
         }
 
