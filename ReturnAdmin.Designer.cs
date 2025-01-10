@@ -37,7 +37,7 @@
             label7.BackColor = Color.WhiteSmoke;
             label7.Font = new Font("NRT Bold", 36F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label7.ForeColor = Color.Teal;
-            label7.Location = new Point(357, 0);
+            label7.Location = new Point(654, 0);
             label7.Name = "label7";
             label7.Size = new Size(309, 69);
             label7.TabIndex = 36;
@@ -49,7 +49,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(label7);
             Name = "ReturnAdmin";
-            Size = new Size(986, 642);
+            Size = new Size(1616, 1029);
             ResumeLayout(false);
             PerformLayout();
         }

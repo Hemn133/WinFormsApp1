@@ -164,7 +164,35 @@ namespace WinFormsApp1
         }
 
 
+        public object ExecuteScalar(string query, Dictionary<string, object> parameters)
+        {
+            object result = null;
 
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    // Add parameters to the SQL command
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                    }
+
+                    try
+                    {
+                        conn.Open();  // Open the connection
+                        result = cmd.ExecuteScalar();  // Execute the query and return the first column of the first row
+                    }
+                    catch (Exception ex)
+                    {
+                        // Handle exceptions (e.g., log them)
+                        throw new Exception("Database error: " + ex.Message);
+                    }
+                }
+            }
+
+            return result;
+        }
 
 
 

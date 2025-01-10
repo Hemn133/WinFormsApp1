@@ -88,7 +88,7 @@ namespace WinFormsApp1
         }
         private void button10_Click(object sender, EventArgs e)
         {
-            string customerId = CustomerName.SelectedValue.ToString(); // Get the selected CustomerID
+            string customerId = CustomerName.SelectedValue?.ToString(); // Get the selected CustomerID
             string amountText = AmountPaid.Text.Trim();
 
             // Validate input
@@ -98,44 +98,63 @@ namespace WinFormsApp1
                 return;
             }
 
-            if (!decimal.TryParse(amountText, out decimal amount) || amount <= 0)
+            if (!decimal.TryParse(amountText, out decimal amountPaid) || amountPaid <= 0)
             {
                 MessageBox.Show("Please enter a valid settlement amount.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // Initialize the DB class
             DB db = new DB();
 
             try
             {
-                // 1. Insert into the DebtSettlement table
-                string insertQuery = "INSERT INTO DebtSettlement (CustomerID,UserAccountID, AmountPaid, PaymentDate) VALUES (@CustomerID,1, @Amount, @SettlementDate)";
+                // 1. Retrieve the customer's current TotalDebt
+                string debtQuery = "SELECT TotalDebt FROM Customer WHERE CustomerID = @CustomerID";
+                Dictionary<string, object> debtParams = new Dictionary<string, object>
+        {
+            { "@CustomerID", customerId }
+        };
+
+                object result = db.ExecuteScalar(debtQuery, debtParams);
+
+                if (result == null || !decimal.TryParse(result.ToString(), out decimal totalDebt))
+                {
+                    MessageBox.Show("Unable to retrieve customer's total debt.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // 2. Validate if AmountPaid > TotalDebt
+                if (amountPaid > totalDebt)
+                {
+                    MessageBox.Show("Amount paid cannot be greater than the total debt.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // 3. Insert into the DebtSettlement table
+                string insertQuery = "INSERT INTO DebtSettlement (CustomerID, UserAccountID, AmountPaid, PaymentDate) VALUES (@CustomerID, 1, @Amount, @SettlementDate)";
                 Dictionary<string, object> insertParams = new Dictionary<string, object>
         {
             { "@CustomerID", customerId },
-            { "@Amount", amount },
-            { "@SettlementDate", DateTime.Now } // Current date and time
+            { "@Amount", amountPaid },
+            { "@SettlementDate", DateTime.Now }
         };
                 db.ExecuteWithParameters(insertQuery, insertParams);
 
-                // 2. Update the TotalDebt in the Customer table
+                // 4. Update the TotalDebt in the Customer table
                 string updateQuery = "UPDATE Customer SET TotalDebt = TotalDebt - @Amount WHERE CustomerID = @CustomerID";
                 Dictionary<string, object> updateParams = new Dictionary<string, object>
         {
             { "@CustomerID", customerId },
-            { "@Amount", amount }
+            { "@Amount", amountPaid }
         };
                 db.ExecuteWithParameters(updateQuery, updateParams);
 
-                // Show success message
                 MessageBox.Show("Debt settlement recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Clear the input fields
                 AmountPaid.Clear();
-                CustomerName.SelectedIndex = -1; // Reset the combobox
+                CustomerName.SelectedIndex = -1;
 
-                // Refresh the DataGridView to display the new settlement
+                // 5. Refresh DataGridView
                 string settlementQuery = @"
             SELECT 
                 ds.DebtSettlementID,
@@ -146,13 +165,14 @@ namespace WinFormsApp1
             JOIN Customer c ON ds.CustomerID = c.CustomerID";
 
                 DataTable settlementData = db.GetDataTable(settlementQuery);
-                dataGridView1.DataSource = settlementData; // Update DataGridView
+                dataGridView1.DataSource = settlementData;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
 
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -367,6 +387,11 @@ namespace WinFormsApp1
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
 
             ReverseColumnsOrder(dataGridView1);
+        }
+
+        private void AmountPaid_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

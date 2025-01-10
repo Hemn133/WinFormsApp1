@@ -49,7 +49,7 @@
             label7.BackColor = Color.WhiteSmoke;
             label7.Font = new Font("NRT Bold", 36F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label7.ForeColor = Color.Teal;
-            label7.Location = new Point(430, 0);
+            label7.Location = new Point(730, 2);
             label7.Name = "label7";
             label7.Size = new Size(157, 69);
             label7.TabIndex = 56;
@@ -58,7 +58,7 @@
             // ExpenseAmount
             // 
             ExpenseAmount.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ExpenseAmount.Location = new Point(729, 141);
+            ExpenseAmount.Location = new Point(1338, 143);
             ExpenseAmount.Multiline = true;
             ExpenseAmount.Name = "ExpenseAmount";
             ExpenseAmount.Size = new Size(250, 33);
@@ -67,7 +67,7 @@
             // Description
             // 
             Description.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Description.Location = new Point(6, 141);
+            Description.Location = new Point(615, 143);
             Description.Multiline = true;
             Description.Name = "Description";
             Description.Size = new Size(395, 33);
@@ -77,7 +77,7 @@
             // 
             button10.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button10.ForeColor = Color.Teal;
-            button10.Location = new Point(643, 185);
+            button10.Location = new Point(1252, 187);
             button10.Name = "button10";
             button10.Size = new Size(336, 35);
             button10.TabIndex = 53;
@@ -89,7 +89,7 @@
             // 
             button9.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button9.ForeColor = Color.Teal;
-            button9.Location = new Point(291, 185);
+            button9.Location = new Point(900, 187);
             button9.Name = "button9";
             button9.Size = new Size(346, 35);
             button9.TabIndex = 52;
@@ -100,7 +100,7 @@
             // 
             button11.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button11.ForeColor = Color.Red;
-            button11.Location = new Point(6, 185);
+            button11.Location = new Point(615, 187);
             button11.Name = "button11";
             button11.Size = new Size(279, 35);
             button11.TabIndex = 51;
@@ -115,12 +115,12 @@
             dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(3, 226);
+            dataGridView1.Location = new Point(8, 241);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(981, 415);
+            dataGridView1.Size = new Size(1600, 785);
             dataGridView1.TabIndex = 50;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
@@ -129,7 +129,7 @@
             Label34.AutoSize = true;
             Label34.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Label34.ForeColor = Color.Teal;
-            Label34.Location = new Point(287, 99);
+            Label34.Location = new Point(896, 101);
             Label34.Name = "Label34";
             Label34.Size = new Size(114, 39);
             Label34.TabIndex = 49;
@@ -140,7 +140,7 @@
             label3.AutoSize = true;
             label3.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.Teal;
-            label3.Location = new Point(843, 99);
+            label3.Location = new Point(1452, 101);
             label3.Name = "label3";
             label3.Size = new Size(136, 39);
             label3.TabIndex = 48;
@@ -149,7 +149,7 @@
             // ExpenseDate
             // 
             ExpenseDate.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ExpenseDate.Location = new Point(633, 23);
+            ExpenseDate.Location = new Point(1242, 25);
             ExpenseDate.Multiline = true;
             ExpenseDate.Name = "ExpenseDate";
             ExpenseDate.Size = new Size(316, 33);
@@ -160,7 +160,7 @@
             Label33.AutoSize = true;
             Label33.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             Label33.ForeColor = Color.Teal;
-            Label33.Location = new Point(643, 99);
+            Label33.Location = new Point(1252, 101);
             Label33.Name = "Label33";
             Label33.Size = new Size(77, 39);
             Label33.TabIndex = 57;
@@ -169,7 +169,7 @@
             // dateTimePicker1
             // 
             dateTimePicker1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dateTimePicker1.Location = new Point(407, 141);
+            dateTimePicker1.Location = new Point(1016, 143);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(316, 33);
             dateTimePicker1.TabIndex = 59;
@@ -191,7 +191,7 @@
             Controls.Add(Label34);
             Controls.Add(label3);
             Name = "ExpenseAdmin";
-            Size = new Size(986, 642);
+            Size = new Size(1616, 1029);
             Load += ExpenseAdmin_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);

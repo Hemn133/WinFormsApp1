@@ -46,7 +46,7 @@
             label7.BackColor = Color.WhiteSmoke;
             label7.Font = new Font("NRT Bold", 36F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label7.ForeColor = Color.Teal;
-            label7.Location = new Point(354, 0);
+            label7.Location = new Point(641, 0);
             label7.Name = "label7";
             label7.Size = new Size(334, 69);
             label7.TabIndex = 47;
@@ -55,7 +55,7 @@
             // CustomerName
             // 
             CustomerName.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            CustomerName.Location = new Point(729, 140);
+            CustomerName.Location = new Point(1336, 139);
             CustomerName.Multiline = true;
             CustomerName.Name = "CustomerName";
             CustomerName.Size = new Size(250, 33);
@@ -64,7 +64,7 @@
             // Amount
             // 
             Amount.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Amount.Location = new Point(6, 140);
+            Amount.Location = new Point(613, 139);
             Amount.Multiline = true;
             Amount.Name = "Amount";
             Amount.Size = new Size(235, 33);
@@ -74,7 +74,7 @@
             // 
             button10.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button10.ForeColor = Color.Teal;
-            button10.Location = new Point(643, 184);
+            button10.Location = new Point(1250, 183);
             button10.Name = "button10";
             button10.Size = new Size(336, 35);
             button10.TabIndex = 43;
@@ -86,7 +86,7 @@
             // 
             button9.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button9.ForeColor = Color.Teal;
-            button9.Location = new Point(291, 184);
+            button9.Location = new Point(898, 183);
             button9.Name = "button9";
             button9.Size = new Size(346, 35);
             button9.TabIndex = 42;
@@ -98,7 +98,7 @@
             // 
             button11.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button11.ForeColor = Color.Red;
-            button11.Location = new Point(6, 184);
+            button11.Location = new Point(613, 183);
             button11.Name = "button11";
             button11.Size = new Size(279, 35);
             button11.TabIndex = 41;
@@ -113,12 +113,12 @@
             dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(3, 225);
+            dataGridView1.Location = new Point(8, 241);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(981, 415);
+            dataGridView1.Size = new Size(1600, 785);
             dataGridView1.TabIndex = 40;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
@@ -127,7 +127,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label5.ForeColor = Color.Teal;
-            label5.Location = new Point(131, 98);
+            label5.Location = new Point(738, 97);
             label5.Name = "label5";
             label5.Size = new Size(110, 39);
             label5.TabIndex = 38;
@@ -138,7 +138,7 @@
             label3.AutoSize = true;
             label3.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.Teal;
-            label3.Location = new Point(784, 98);
+            label3.Location = new Point(1391, 97);
             label3.Name = "label3";
             label3.Size = new Size(195, 39);
             label3.TabIndex = 36;
@@ -158,7 +158,7 @@
             Controls.Add(label5);
             Controls.Add(label3);
             Name = "CustomerAdmin";
-            Size = new Size(986, 642);
+            Size = new Size(1616, 1029);
             Load += CustomerAdmin_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);

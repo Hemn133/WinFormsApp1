@@ -56,7 +56,7 @@
             // DatePaid
             // 
             DatePaid.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            DatePaid.Location = new Point(6, 146);
+            DatePaid.Location = new Point(616, 145);
             DatePaid.Multiline = true;
             DatePaid.Name = "DatePaid";
             DatePaid.Size = new Size(279, 33);
@@ -66,7 +66,7 @@
             // 
             button10.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button10.ForeColor = Color.Teal;
-            button10.Location = new Point(643, 185);
+            button10.Location = new Point(1253, 184);
             button10.Name = "button10";
             button10.Size = new Size(336, 35);
             button10.TabIndex = 53;
@@ -78,7 +78,7 @@
             // 
             button11.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button11.ForeColor = Color.Red;
-            button11.Location = new Point(6, 185);
+            button11.Location = new Point(616, 184);
             button11.Name = "button11";
             button11.Size = new Size(279, 35);
             button11.TabIndex = 51;
@@ -93,12 +93,12 @@
             dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(3, 226);
+            dataGridView1.Location = new Point(8, 241);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(981, 415);
+            dataGridView1.Size = new Size(1600, 785);
             dataGridView1.TabIndex = 50;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
@@ -107,7 +107,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label5.ForeColor = Color.Teal;
-            label5.Location = new Point(208, 104);
+            label5.Location = new Point(818, 103);
             label5.Name = "label5";
             label5.Size = new Size(77, 39);
             label5.TabIndex = 49;
@@ -118,7 +118,7 @@
             label3.AutoSize = true;
             label3.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.Teal;
-            label3.Location = new Point(784, 104);
+            label3.Location = new Point(1394, 103);
             label3.Name = "label3";
             label3.Size = new Size(195, 39);
             label3.TabIndex = 48;
@@ -128,7 +128,7 @@
             // 
             CustomerName.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             CustomerName.FormattingEnabled = true;
-            CustomerName.Location = new Point(643, 146);
+            CustomerName.Location = new Point(1253, 145);
             CustomerName.Name = "CustomerName";
             CustomerName.Size = new Size(336, 33);
             CustomerName.TabIndex = 57;
@@ -136,18 +136,19 @@
             // AmountPaid
             // 
             AmountPaid.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            AmountPaid.Location = new Point(291, 146);
+            AmountPaid.Location = new Point(901, 145);
             AmountPaid.Multiline = true;
             AmountPaid.Name = "AmountPaid";
             AmountPaid.Size = new Size(346, 33);
             AmountPaid.TabIndex = 58;
+            AmountPaid.TextChanged += AmountPaid_TextChanged;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label1.ForeColor = Color.Teal;
-            label1.Location = new Point(497, 104);
+            label1.Location = new Point(1107, 103);
             label1.Name = "label1";
             label1.Size = new Size(140, 39);
             label1.TabIndex = 59;
@@ -168,7 +169,7 @@
             Controls.Add(label5);
             Controls.Add(label3);
             Name = "DebtSettlementAdmin";
-            Size = new Size(986, 642);
+            Size = new Size(1616, 1029);
             Load += DebtSettlementAdmin_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
