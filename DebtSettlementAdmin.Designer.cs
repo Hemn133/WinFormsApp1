@@ -73,6 +73,7 @@
             button10.TabIndex = 53;
             button10.Text = "زیادکردن";
             button10.UseVisualStyleBackColor = true;
+            button10.Click += button10_Click;
             // 
             // button9
             // 
@@ -84,6 +85,7 @@
             button9.TabIndex = 52;
             button9.Text = "گۆڕانکاری";
             button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
             // 
             // button11
             // 
@@ -95,6 +97,7 @@
             button11.TabIndex = 51;
             button11.Text = "سڕینەوە";
             button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
             // 
             // dataGridView1
             // 
@@ -110,6 +113,7 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(981, 415);
             dataGridView1.TabIndex = 50;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // label5
             // 
