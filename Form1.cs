@@ -43,17 +43,8 @@ namespace WinFormsApp1
                 {
                     MessageBox.Show("Login Successful!");
 
-                    // Redirect to the appropriate dashboard based on the role
-                    if (userRole == "Admin")
-                    {
-                        AdminDashboard adminDashboard = new AdminDashboard();
-                        adminDashboard.Show();
-                    }
-                    else if (userRole == "Employee")
-                    {
-                        EmployeeDashboard employeeDashboard = new EmployeeDashboard();
-                        employeeDashboard.Show();
-                    }
+                    AdminDashboard adminDashboard = new AdminDashboard(userRole);
+                    adminDashboard.Show();
 
                     this.Hide(); // Hide the login form
                 }

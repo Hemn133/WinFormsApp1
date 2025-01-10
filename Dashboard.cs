@@ -14,15 +14,12 @@ namespace WinFormsApp1
 {
     public partial class AdminDashboard : Form
     {
+        private string _userRole;
 
-
-
-        public AdminDashboard()
+        public AdminDashboard(string userRole)
         {
             InitializeComponent();
-
-
-
+            _userRole = userRole;
         }
         private void LoadUserControl(UserControl newControl)
         {
@@ -39,10 +36,23 @@ namespace WinFormsApp1
 
         private void Dashboard_Load(object sender, EventArgs e)
         {
+            AdjustUIForRole();
             ProductAdmin categoryAControl = new ProductAdmin();
             LoadUserControl(categoryAControl);
         }
-
+        private void AdjustUIForRole()
+        {
+            if (_userRole == "Admin")
+            {
+                // Admin has full access
+                
+            }
+            else if (_userRole == "Employee")
+            {
+                // Employee has limited access
+                
+            }
+        }
 
         private void label1_Click(object sender, EventArgs e)
         {
