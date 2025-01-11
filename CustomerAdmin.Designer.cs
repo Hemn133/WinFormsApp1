@@ -64,7 +64,7 @@
             // Amount
             // 
             Amount.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Amount.Location = new Point(613, 139);
+            Amount.Location = new Point(1095, 139);
             Amount.Multiline = true;
             Amount.Name = "Amount";
             Amount.Size = new Size(235, 33);
@@ -127,7 +127,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label5.ForeColor = Color.Teal;
-            label5.Location = new Point(738, 97);
+            label5.Location = new Point(1220, 97);
             label5.Name = "label5";
             label5.Size = new Size(110, 39);
             label5.TabIndex = 38;

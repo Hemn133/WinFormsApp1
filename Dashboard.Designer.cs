@@ -49,20 +49,20 @@
             panel1.BackColor = Color.WhiteSmoke;
             panel1.Location = new Point(26, 26);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1616, 1029);
+            panel1.Size = new Size(1626, 1029);
             panel1.TabIndex = 2;
             // 
             // button1
             // 
             button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
             button1.BackgroundImageLayout = ImageLayout.None;
-            button1.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button1.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button1.ForeColor = Color.Teal;
             button1.Image = (Image)resources.GetObject("button1.Image");
             button1.ImageAlign = ContentAlignment.MiddleLeft;
-            button1.Location = new Point(16, 226);
+            button1.Location = new Point(0, 383);
             button1.Name = "button1";
-            button1.Size = new Size(243, 61);
+            button1.Size = new Size(259, 111);
             button1.TabIndex = 4;
             button1.Text = "کۆگا";
             button1.TextAlign = ContentAlignment.MiddleRight;
@@ -71,11 +71,11 @@
             // 
             // button2
             // 
-            button2.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button2.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button2.ForeColor = Color.Teal;
-            button2.Location = new Point(16, 92);
+            button2.Location = new Point(0, 149);
             button2.Name = "button2";
-            button2.Size = new Size(243, 61);
+            button2.Size = new Size(259, 111);
             button2.TabIndex = 5;
             button2.Text = "فرۆشتنی کاڵا";
             button2.TextAlign = ContentAlignment.MiddleRight;
@@ -84,11 +84,11 @@
             // 
             // button3
             // 
-            button3.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button3.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button3.ForeColor = Color.Teal;
-            button3.Location = new Point(16, 159);
+            button3.Location = new Point(0, 266);
             button3.Name = "button3";
-            button3.Size = new Size(243, 61);
+            button3.Size = new Size(259, 111);
             button3.TabIndex = 6;
             button3.Text = "گەڕانەوەی کاڵا";
             button3.TextAlign = ContentAlignment.MiddleRight;
@@ -97,11 +97,11 @@
             // 
             // button4
             // 
-            button4.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button4.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button4.ForeColor = Color.Teal;
-            button4.Location = new Point(17, 293);
+            button4.Location = new Point(0, 500);
             button4.Name = "button4";
-            button4.Size = new Size(243, 61);
+            button4.Size = new Size(259, 111);
             button4.TabIndex = 7;
             button4.Text = "خاوەن قەرزەکان";
             button4.TextAlign = ContentAlignment.MiddleRight;
@@ -110,11 +110,11 @@
             // 
             // button5
             // 
-            button5.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button5.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button5.ForeColor = Color.Teal;
-            button5.Location = new Point(17, 360);
+            button5.Location = new Point(0, 617);
             button5.Name = "button5";
-            button5.Size = new Size(243, 61);
+            button5.Size = new Size(259, 111);
             button5.TabIndex = 8;
             button5.Text = "گەڕانەوەی قەرز";
             button5.TextAlign = ContentAlignment.MiddleRight;
@@ -123,11 +123,11 @@
             // 
             // button6
             // 
-            button6.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button6.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button6.ForeColor = Color.Teal;
-            button6.Location = new Point(16, 496);
+            button6.Location = new Point(0, 734);
             button6.Name = "button6";
-            button6.Size = new Size(243, 61);
+            button6.Size = new Size(259, 111);
             button6.TabIndex = 9;
             button6.Text = "خەرجی";
             button6.TextAlign = ContentAlignment.MiddleRight;
@@ -136,11 +136,11 @@
             // 
             // button7
             // 
-            button7.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button7.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button7.ForeColor = Color.Teal;
-            button7.Location = new Point(16, 428);
+            button7.Location = new Point(0, 851);
             button7.Name = "button7";
-            button7.Size = new Size(243, 61);
+            button7.Size = new Size(259, 111);
             button7.TabIndex = 10;
             button7.Text = "ڕاپۆرتەکان";
             button7.TextAlign = ContentAlignment.MiddleRight;
@@ -149,11 +149,11 @@
             // 
             // button8
             // 
-            button8.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button8.Font = new Font("NRT Bold", 26.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button8.ForeColor = Color.Red;
-            button8.Location = new Point(19, 958);
+            button8.Location = new Point(0, 968);
             button8.Name = "button8";
-            button8.Size = new Size(243, 61);
+            button8.Size = new Size(260, 61);
             button8.TabIndex = 11;
             button8.Text = "چونەدەرەوە";
             button8.TextAlign = ContentAlignment.MiddleRight;
@@ -163,20 +163,20 @@
             // pictureBox1
             // 
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(17, 3);
+            pictureBox1.Location = new Point(0, -21);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(243, 88);
+            pictureBox1.Size = new Size(260, 164);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 12;
             pictureBox1.TabStop = false;
             // 
             // panel2
             // 
+            panel2.Controls.Add(button6);
             panel2.Controls.Add(pictureBox1);
             panel2.Controls.Add(button5);
             panel2.Controls.Add(button4);
             panel2.Controls.Add(button7);
-            panel2.Controls.Add(button6);
             panel2.Controls.Add(button8);
             panel2.Controls.Add(button3);
             panel2.Controls.Add(button1);

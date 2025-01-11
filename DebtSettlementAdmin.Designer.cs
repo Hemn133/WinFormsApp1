@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             label7 = new Label();
-            DatePaid = new TextBox();
             button10 = new Button();
             button11 = new Button();
             dataGridView1 = new DataGridView();
@@ -38,6 +37,7 @@
             CustomerName = new ComboBox();
             AmountPaid = new TextBox();
             label1 = new Label();
+            DatePaid = new DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -47,20 +47,11 @@
             label7.BackColor = Color.WhiteSmoke;
             label7.Font = new Font("NRT Bold", 36F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label7.ForeColor = Color.Teal;
-            label7.Location = new Point(354, 1);
+            label7.Location = new Point(658, 0);
             label7.Name = "label7";
             label7.Size = new Size(324, 69);
             label7.TabIndex = 56;
             label7.Text = "گەڕانەوەی قەرز";
-            // 
-            // DatePaid
-            // 
-            DatePaid.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            DatePaid.Location = new Point(616, 145);
-            DatePaid.Multiline = true;
-            DatePaid.Name = "DatePaid";
-            DatePaid.Size = new Size(279, 33);
-            DatePaid.TabIndex = 54;
             // 
             // button10
             // 
@@ -78,7 +69,7 @@
             // 
             button11.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button11.ForeColor = Color.Red;
-            button11.Location = new Point(616, 184);
+            button11.Location = new Point(968, 184);
             button11.Name = "button11";
             button11.Size = new Size(279, 35);
             button11.TabIndex = 51;
@@ -154,15 +145,24 @@
             label1.TabIndex = 59;
             label1.Text = "بڕی پارەدان";
             // 
+            // DatePaid
+            // 
+            DatePaid.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            DatePaid.Format = DateTimePickerFormat.Short;
+            DatePaid.Location = new Point(616, 145);
+            DatePaid.Name = "DatePaid";
+            DatePaid.Size = new Size(279, 33);
+            DatePaid.TabIndex = 60;
+            // 
             // DebtSettlementAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(DatePaid);
             Controls.Add(label1);
             Controls.Add(AmountPaid);
             Controls.Add(CustomerName);
             Controls.Add(label7);
-            Controls.Add(DatePaid);
             Controls.Add(button10);
             Controls.Add(button11);
             Controls.Add(dataGridView1);
@@ -179,7 +179,6 @@
         #endregion
 
         private Label label7;
-        private TextBox DatePaid;
         private Button button10;
         private Button button11;
         private DataGridView dataGridView1;
@@ -188,5 +187,6 @@
         private ComboBox CustomerName;
         private TextBox AmountPaid;
         private Label label1;
+        private DateTimePicker DatePaid;
     }
 }

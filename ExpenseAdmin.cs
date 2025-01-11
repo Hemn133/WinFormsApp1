@@ -19,6 +19,8 @@ namespace WinFormsApp1
 
         private void ExpenseAdmin_Load(object sender, EventArgs e)
         {
+
+            ExpenseDateTextBox.Visible = false;
             DB db = new DB(); // Create an instance of the DB class
             string query = "SELECT * FROM Expenses"; // Replace with your actual query
 
@@ -36,7 +38,7 @@ namespace WinFormsApp1
             dataGridView1.Columns["ExpenseDate"].HeaderText = "بەروار";
 
             dataGridView1.Columns["Amount"].HeaderText = "بڕی خەرجی";
-            dateTimePicker1.Text = dateTimePicker1.Text = DateTime.Now.ToString("");
+            ExpenseDateTextBox.Text = ExpenseDateTextBox.Text = DateTime.Now.ToString("");
 
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
@@ -56,7 +58,7 @@ namespace WinFormsApp1
             dataGridView1.GridColor = Color.Gray;
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
-            
+
 
         }
 
@@ -73,7 +75,7 @@ namespace WinFormsApp1
 
         private void button10_Click(object sender, EventArgs e)
         {
-            string expenseDate = ExpenseDate.Text.Trim();
+            string expenseDate = ExpenseDatePicker.Text.Trim();
             string description = Description.Text.Trim();
             string amount = ExpenseAmount.Text.Trim();
 
@@ -165,8 +167,59 @@ namespace WinFormsApp1
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             ExpenseAmount.Text = dataGridView1.SelectedRows[0].Cells[4].Value.ToString();
-            ExpenseDate.Text = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
+            ExpenseDateTextBox.Text = dataGridView1.SelectedRows[0].Cells[2].Value.ToString();
             Description.Text = dataGridView1.SelectedRows[0].Cells[3].Value.ToString();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            string expenseamount = ExpenseAmount.Text.Trim();
+            string description = Description.Text.Trim();
+            string date = ExpenseDatePicker.Text.Trim();
+            
+
+            // Validate input
+            if (
+        string.IsNullOrEmpty(expenseamount) ||
+        string.IsNullOrEmpty(description) ||
+        string.IsNullOrEmpty(date))
+            {
+                MessageBox.Show("تکایە کاڵا دیاری بکە", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            // Ensure a row is selected to get the ExpenseID
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a record to update.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Get the selected ExpenseID
+            int expenseId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["ExpenseID"].Value);
+
+            DB db = new DB();
+
+            string query =  "UPDATE Expenses SET ExpenseDate = @ExpenseDate, Description = @Description, Amount = @Amount WHERE ExpenseID = @ExpenseID";
+
+            // Prepare parameters
+            var parameters = new Dictionary<string, object>
+    {
+        { "@ExpenseDate", date },
+        { "@Description", description },
+        { "@Amount", expenseamount },
+        { "@ExpenseID", expenseId }
+    };
+
+            try
+            {
+                db.ExecuteWithParameters(query, parameters);
+                MessageBox.Show("سەرکەوتوو بوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                RefreshDataGridView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

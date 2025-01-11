@@ -90,6 +90,7 @@ namespace WinFormsApp1
         {
             string customerId = CustomerName.SelectedValue?.ToString(); // Get the selected CustomerID
             string amountText = AmountPaid.Text.Trim();
+            DateTime dateTime = DatePaid.Value;
 
             // Validate input
             if (string.IsNullOrEmpty(customerId) || string.IsNullOrEmpty(amountText))
@@ -119,14 +120,14 @@ namespace WinFormsApp1
 
                 if (result == null || !decimal.TryParse(result.ToString(), out decimal totalDebt))
                 {
-                    MessageBox.Show("Unable to retrieve customer's total debt.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("نەتوانرا کۆی گشتی قەرز بگەڕێندرێتەوە.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 // 2. Validate if AmountPaid > TotalDebt
                 if (amountPaid > totalDebt)
                 {
-                    MessageBox.Show("Amount paid cannot be greater than the total debt.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("بڕی پارەی گەڕاوە نابێت لە کۆی گشتی قەرز زیاتر بێت.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -136,7 +137,7 @@ namespace WinFormsApp1
         {
             { "@CustomerID", customerId },
             { "@Amount", amountPaid },
-            { "@SettlementDate", DateTime.Now }
+            { "@SettlementDate", DatePaid.Value }
         };
                 db.ExecuteWithParameters(insertQuery, insertParams);
 
@@ -149,7 +150,7 @@ namespace WinFormsApp1
         };
                 db.ExecuteWithParameters(updateQuery, updateParams);
 
-                MessageBox.Show("Debt settlement recorded successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("تۆمار کرا!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 AmountPaid.Clear();
                 CustomerName.SelectedIndex = -1;
@@ -314,6 +315,13 @@ namespace WinFormsApp1
 
                 MessageBox.Show("Debt settlement deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+
+
+            AmountPaid.Clear();
+       
+
+
+
         }
 
 
