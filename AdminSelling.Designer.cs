@@ -37,7 +37,7 @@
             label7.BackColor = Color.WhiteSmoke;
             label7.Font = new Font("NRT Bold", 36F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label7.ForeColor = Color.Teal;
-            label7.Location = new Point(663, 0);
+            label7.Location = new Point(626, 0);
             label7.Name = "label7";
             label7.Size = new Size(290, 69);
             label7.TabIndex = 37;
