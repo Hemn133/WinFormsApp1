@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
 
 namespace WinFormsApp1
 {
@@ -89,7 +90,7 @@ namespace WinFormsApp1
                 }
                 else
                 {
-                    MessageBox.Show("No products available in the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("!هیچ کاڵایەک لە کۆگادا بەردەست نییە", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 // Populate Customer ComboBox
@@ -103,10 +104,7 @@ namespace WinFormsApp1
                     comboBox1.ValueMember = "CustomerID";
                     comboBox1.SelectedIndex = -1; // Clear selection initially
                 }
-                else
-                {
-                    MessageBox.Show("No customers available in the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
+               
 
                 // Disable Customer ComboBox initially
                 comboBox1.Enabled = false;
@@ -189,91 +187,116 @@ namespace WinFormsApp1
 
         private void save_Click(object sender, EventArgs e)
         {
-            try
+            using (SqlConnection conn = new SqlConnection(new DB().ConnectionString))
             {
-                DB db = new DB();
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
 
-                // Calculate total amount from DataGridView
-                decimal totalAmount = 0;
-                foreach (DataGridViewRow row in dataGridView1.Rows)
+                try
                 {
-                    if (row.Cells["TotalPrice"].Value != null)
+                    DB db = new DB();
+
+                    // Calculate total amount from DataGridView
+                    decimal totalAmount = 0;
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
-                        totalAmount += Convert.ToDecimal(row.Cells["TotalPrice"].Value);
+                        if (row.Cells["TotalPrice"].Value != null)
+                        {
+                            totalAmount += Convert.ToDecimal(row.Cells["TotalPrice"].Value);
+                        }
                     }
+
+                    // Validate stock availability for each product
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        if (row.Cells["ProductID"].Value == null) continue;
+
+                        int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
+                        int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+
+                        // Check stock availability
+                        string stockCheckQuery = "SELECT QuantityAvailable FROM Product WHERE ProductID = @ProductID";
+                        SqlCommand cmdStockCheck = new SqlCommand(stockCheckQuery, conn, transaction);
+                        cmdStockCheck.Parameters.AddWithValue("@ProductID", productID);
+
+                        int availableQuantity = Convert.ToInt32(cmdStockCheck.ExecuteScalar());
+
+                        if (availableQuantity < quantity)
+                        {
+                            // Rollback transaction and show an error
+                            transaction.Rollback();
+                            MessageBox.Show($"Insufficient stock for Product ID {productID}. Available: {availableQuantity}, Requested: {quantity}.",
+                                "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+
+                    // Determine customer ID if sale is on credit
+                    string customerID = isdebt.Checked ? comboBox1.SelectedValue.ToString() : null;
+                    bool isCredit = isdebt.Checked;
+
+                    // Insert into Sales table
+                    string insertSaleQuery = "INSERT INTO Sales (CustomerID, SaleDate, IsCredit, UserAccountID, TotalAmount) OUTPUT INSERTED.SaleID VALUES (@CustomerID, @SaleDate, @IsCredit, @UserAccountID, @TotalAmount)";
+                    SqlCommand cmdSale = new SqlCommand(insertSaleQuery, conn, transaction);
+                    cmdSale.Parameters.AddWithValue("@CustomerID", (object)customerID ?? DBNull.Value);
+                    cmdSale.Parameters.AddWithValue("@SaleDate", DateTime.Now);
+                    cmdSale.Parameters.AddWithValue("@IsCredit", isCredit);
+                    cmdSale.Parameters.AddWithValue("@UserAccountID", currentUserID);
+                    cmdSale.Parameters.AddWithValue("@TotalAmount", totalAmount);
+
+                    int saleID = (int)cmdSale.ExecuteScalar();
+
+                    // Insert into SalesDetails for each product
+                    foreach (DataGridViewRow row in dataGridView1.Rows)
+                    {
+                        if (row.Cells["ProductID"].Value == null) continue;
+
+                        int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
+                        int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+                        decimal subtotal = Convert.ToDecimal(row.Cells["TotalPrice"].Value);
+
+                        string insertDetailQuery = "INSERT INTO SalesDetails (SaleID, ProductID, Quantity, Subtotal) VALUES (@SaleID, @ProductID, @Quantity, @Subtotal)";
+                        SqlCommand cmdDetail = new SqlCommand(insertDetailQuery, conn, transaction);
+                        cmdDetail.Parameters.AddWithValue("@SaleID", saleID);
+                        cmdDetail.Parameters.AddWithValue("@ProductID", productID);
+                        cmdDetail.Parameters.AddWithValue("@Quantity", quantity);
+                        cmdDetail.Parameters.AddWithValue("@Subtotal", subtotal);
+                        cmdDetail.ExecuteNonQuery();
+
+                        // Update Product quantity
+                        string updateProductQuery = "UPDATE Product SET QuantityAvailable = QuantityAvailable - @Quantity WHERE ProductID = @ProductID";
+                        SqlCommand cmdUpdate = new SqlCommand(updateProductQuery, conn, transaction);
+                        cmdUpdate.Parameters.AddWithValue("@Quantity", quantity);
+                        cmdUpdate.Parameters.AddWithValue("@ProductID", productID);
+                        cmdUpdate.ExecuteNonQuery();
+                    }
+
+                    // Update customer's debt if sale is on credit
+                    if (isCredit)
+                    {
+                        string updateCustomerDebtQuery = "UPDATE Customer SET TotalDebt = TotalDebt + @TotalAmount WHERE CustomerID = @CustomerID";
+                        SqlCommand cmdDebt = new SqlCommand(updateCustomerDebtQuery, conn, transaction);
+                        cmdDebt.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                        cmdDebt.Parameters.AddWithValue("@CustomerID", customerID);
+                        cmdDebt.ExecuteNonQuery();
+                    }
+
+                    // Commit transaction
+                    transaction.Commit();
+
+                    MessageBox.Show("Sale completed successfully!");
+                    button1.PerformClick(); // Reset form
                 }
-
-                // Determine customer ID if sale is on credit
-                string customerID = isdebt.Checked ? comboBox1.SelectedValue.ToString() : null;
-                bool isCredit = isdebt.Checked;
-
-                // Example of current user ID; replace with your actual logic for fetching user ID
-                int currentUserID = 1; // Assuming you're fetching this from the logged-in user session
-
-                // Insert into Sales table
-                string insertSaleQuery = "INSERT INTO Sales (CustomerID, SaleDate, IsCredit, UserAccountID, TotalAmount) OUTPUT INSERTED.SaleID VALUES (@CustomerID, @SaleDate, @IsCredit, @UserAccountID, @TotalAmount)";
-                Dictionary<string, object> saleParams = new Dictionary<string, object>
-        {
-            { "@CustomerID", (object)customerID ?? DBNull.Value },
-            { "@SaleDate", DateTime.Now },
-            { "@IsCredit", isCredit },
-            { "@UserAccountID", currentUserID },
-            { "@TotalAmount", totalAmount } // Pass the calculated total amount
-        };
-                int saleID = (int)db.ExecuteScalar(insertSaleQuery, saleParams);
-
-                // Insert into SaleDetails table for each product in the DataGridView
-                foreach (DataGridViewRow row in dataGridView1.Rows)
+                catch (Exception ex)
                 {
-                    if (row.Cells["ProductID"].Value == null) continue; // Skip empty rows
-
-                    int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
-                    int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
-                    decimal unitPrice = Convert.ToDecimal(row.Cells["UnitPrice"].Value);
-                    decimal subtotal = Convert.ToDecimal(row.Cells["TotalPrice"].Value);
-
-                    string insertDetailQuery = "INSERT INTO SalesDetails(SaleID, ProductID, Quantity, Subtotal) VALUES(@SaleID, @ProductID, @Quantity, @Subtotal)";
-                    Dictionary<string, object> detailParams = new Dictionary<string, object>
-                    { 
-                { "@SaleID", saleID },
-                { "@ProductID", productID },
-                { "@Quantity", quantity },
-                { "@Subtotal", subtotal }
-            };
-                    db.Execute(insertDetailQuery);
-
-                    // Update product quantity in the inventory
-                    string updateProductQuery = "UPDATE Product SET Quantity = Quantity - @Quantity WHERE ProductID = @ProductID";
-                    Dictionary<string, object> updateParams = new Dictionary<string, object>
-            {
-                { "@Quantity", quantity },
-                { "@ProductID", productID }
-            };
-                    db.Execute(updateProductQuery);
+                    transaction.Rollback();
+                    MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-
-                // Update customer's total debt if it's a credit sale
-                if (isCredit)
-                {
-                    string updateCustomerDebtQuery = "UPDATE Customer SET TotalDebt = TotalDebt + @TotalAmount WHERE CustomerID = @CustomerID";
-                    Dictionary<string, object> debtParams = new Dictionary<string, object>
-            {
-                { "@TotalAmount", totalAmount },
-                { "@CustomerID", customerID }
-            };
-                    db.Execute(updateCustomerDebtQuery);
-                }
-
-                MessageBox.Show("Sale completed successfully!");
-                button1.PerformClick(); // Reset form
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-
-
         }
+
+
+        
 
         private void isdebt_CheckedChanged(object sender, EventArgs e)
         {

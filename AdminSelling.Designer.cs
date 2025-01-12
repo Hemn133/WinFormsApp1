@@ -85,7 +85,7 @@
             dataGridView1.Location = new Point(1126, 230);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
-            dataGridView1.Size = new Size(487, 513);
+            dataGridView1.Size = new Size(487, 750);
             dataGridView1.TabIndex = 41;
             // 
             // isdebt
@@ -105,7 +105,7 @@
             // 
             save.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             save.ForeColor = Color.Teal;
-            save.Location = new Point(1126, 749);
+            save.Location = new Point(1126, 987);
             save.Name = "save";
             save.Size = new Size(160, 34);
             save.TabIndex = 43;
@@ -140,7 +140,7 @@
             label3.AutoSize = true;
             label3.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.Teal;
-            label3.Location = new Point(1514, 755);
+            label3.Location = new Point(1514, 993);
             label3.Name = "label3";
             label3.Size = new Size(99, 27);
             label3.TabIndex = 46;
@@ -148,7 +148,8 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(1292, 749);
+            textBox1.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox1.Location = new Point(1292, 987);
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
             textBox1.ReadOnly = true;

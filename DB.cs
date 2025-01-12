@@ -10,10 +10,21 @@ using System.Data;
 
 namespace WinFormsApp1
 {
-    internal class DB
+    public class DB
     {
 
-        public string ConnectionString = "Data Source=localhost;Initial Catalog=Pharmacy;Integrated Security=True;Trust Server Certificate=True";
+       
+        public string ConnectionString
+        {
+            get
+            {
+                // Update the placeholders with your actual server, database, username, and password
+                return "Data Source=localhost;Initial Catalog=Pharmacy;Integrated Security=True;Encrypt=True;Trust Server Certificate=True";
+            }
+        }
+
+
+
         private SqlConnection con;
 
 
@@ -137,62 +148,38 @@ namespace WinFormsApp1
 
         public DataTable GetDataTable(string query, Dictionary<string, object> parameters)
         {
-            DataTable dataTable = new DataTable();
-            try
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString))
-                using (SqlCommand cmd = new SqlCommand(query, connection))
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    // Add the parameters to the command
-                    foreach (var param in parameters)
-                    {
-                        cmd.Parameters.AddWithValue(param.Key, param.Value);
-                    }
-
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
-                        // Fill the DataTable with data from the query
-                        adapter.Fill(dataTable);
+                        DataTable table = new DataTable();
+                        adapter.Fill(table);
+                        return table;
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            return dataTable;
         }
 
 
         public object ExecuteScalar(string query, Dictionary<string, object> parameters)
         {
-            object result = null;
-
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
+                conn.Open();
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    // Add parameters to the SQL command
                     foreach (var param in parameters)
                     {
-                        cmd.Parameters.AddWithValue(param.Key, param.Value ?? DBNull.Value);
+                        cmd.Parameters.AddWithValue(param.Key, param.Value);
                     }
-
-                    try
-                    {
-                        conn.Open();  // Open the connection
-                        result = cmd.ExecuteScalar();  // Execute the query and return the first column of the first row
-                    }
-                    catch (Exception ex)
-                    {
-                        // Handle exceptions (e.g., log them)
-                        throw new Exception("Database error: " + ex.Message);
-                    }
+                    return cmd.ExecuteScalar();
                 }
             }
-
-            return result;
         }
+        
 
 
 
