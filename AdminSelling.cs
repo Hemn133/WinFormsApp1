@@ -232,9 +232,9 @@ namespace WinFormsApp1
                     decimal unitPrice = Convert.ToDecimal(row.Cells["UnitPrice"].Value);
                     decimal subtotal = Convert.ToDecimal(row.Cells["TotalPrice"].Value);
 
-                    string insertDetailQuery = "INSERT INTO SaleDetails (SaleID, ProductID, Quantity, Subtotal) VALUES (@SaleID, @ProductID, @Quantity, @Subtotal)";
+                    string insertDetailQuery = "INSERT INTO SalesDetails(SaleID, ProductID, Quantity, Subtotal) VALUES(@SaleID, @ProductID, @Quantity, @Subtotal)";
                     Dictionary<string, object> detailParams = new Dictionary<string, object>
-            {
+                    { 
                 { "@SaleID", saleID },
                 { "@ProductID", productID },
                 { "@Quantity", quantity },
