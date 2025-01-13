@@ -103,17 +103,23 @@ namespace WinFormsApp1
 
             try
             {
-                // Query to fetch sales data within the specified date range
-                string query = @"SELECT SaleID, SaleDate, UserAccountID, TotalAmount 
-                         FROM Sales 
-                         WHERE SaleDate BETWEEN @startdate AND @enddate";
+                // Query to fetch sales data along with the username within the specified date range
+                string query = @"
+        SELECT 
+            Sales.SaleID, 
+            Sales.SaleDate, 
+            UserAccount.Username AS SoldBy, -- Fetch the username from UserAccount
+            Sales.TotalAmount
+        FROM Sales
+        INNER JOIN UserAccount ON Sales.UserAccountID = UserAccount.UserAccountID -- Join with UserAccount table
+        WHERE SaleDate BETWEEN @startdate AND @enddate";
 
                 // Create a dictionary to hold the parameters
                 var parameters = new Dictionary<string, object>
-        {
-            { "@startdate", startDate }, // Ensure case matches query
-            { "@enddate", endDate }     // Ensure case matches query
-        };
+    {
+        { "@startdate", startDate }, // Ensure case matches query
+        { "@enddate", endDate }     // Ensure case matches query
+    };
 
                 // Fetch data using the query and parameters
                 DataTable salesData = db.GetDataTable(query, parameters);
@@ -132,9 +138,9 @@ namespace WinFormsApp1
                     dataGridView2.Columns["TotalAmount"].HeaderText = "کۆی گشتی";
                 }
 
-                if (dataGridView2.Columns.Contains("UserAccountID"))
+                if (dataGridView2.Columns.Contains("SoldBy"))
                 {
-                    dataGridView2.Columns["UserAccountID"].HeaderText = "فرۆشراوە لە لایەن";
+                    dataGridView2.Columns["SoldBy"].HeaderText = "فرۆشراوە لە لایەن";
                 }
 
                 // Hide the SaleID column if necessary
@@ -426,42 +432,41 @@ namespace WinFormsApp1
         }
 
 
-        private void RefreshDataGridView2()
+        private void RefreshDataGridView2(DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
-                // Get the start and end dates from the DateTimePickers
-                DateTime startDate = dateTimePicker1.Value.Date; // Ensure only the date part is considered
-                DateTime endDate = dateTimePicker2.Value.Date.AddDays(1).AddTicks(-1); // Include the entire end day
+                // Base query to fetch sales with Username
+                string query = @"
+            SELECT 
+                s.SaleID, 
+                s.SaleDate, 
+                u.Username AS [فرۆشراوە لە لایەن], 
+                s.TotalAmount 
+            FROM Sales s
+            INNER JOIN UserAccount u ON s.UserAccountID = u.UserAccountID";
 
-                // Update the query to filter by the date range
-                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount " +
-                               "FROM Sales " +
-                               "WHERE SaleDate BETWEEN @startDate AND @endDate";
-
-                // Pass the parameters to the query
-                Dictionary<string, object> parameters = new Dictionary<string, object>
-        {
-            { "@startDate", startDate },
-            { "@endDate", endDate }
-        };
-
-                // Fetch the filtered sales data
-                DataTable salesData = db.GetDataTable(query, parameters);
-
-                // Rebind data to DataGridView2
-                dataGridView2.DataSource = salesData;
-
-                // Optionally hide the SaleID column
-                if (dataGridView2.Columns.Contains("SaleID"))
+                // If startDate and endDate are provided, filter by date range
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                if (startDate.HasValue && endDate.HasValue)
                 {
-                    dataGridView2.Columns["SaleID"].Visible = false;
+                    query += " WHERE s.SaleDate BETWEEN @StartDate AND @EndDate";
+                    parameters.Add("@StartDate", startDate.Value);
+                    parameters.Add("@EndDate", endDate.Value);
                 }
+
+                // Fetch data from the database
+                DataTable salesData = db.GetDataTableParam(query, parameters);
+
+                // Bind the fetched data to the DataGridView
+                dataGridView2.DataSource = salesData;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error refreshing sales data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+
         }
 
 
@@ -526,9 +531,16 @@ namespace WinFormsApp1
                 DateTime startDate = dateTimePicker1.Value.Date;
                 DateTime endDate = dateTimePicker2.Value.Date;
 
-
-                // Query to fetch sales between the selected dates
-                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount FROM Sales WHERE SaleDate BETWEEN @StartDate AND @EndDate";
+                // Query to fetch sales between the selected dates with Username
+                string query = @"
+            SELECT 
+                s.SaleID, 
+                s.SaleDate, 
+                u.Username AS UserAccount, 
+                s.TotalAmount 
+            FROM Sales s
+            INNER JOIN UserAccount u ON s.UserAccountID = u.UserAccountID
+            WHERE s.SaleDate BETWEEN @StartDate AND @EndDate";
 
                 // Prepare parameters for the query
                 Dictionary<string, object> parameters = new Dictionary<string, object>
