@@ -153,6 +153,15 @@ namespace WinFormsApp1
                 conn.Open();
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
+                    // Add parameters to the SQL command
+                    if (parameters != null)
+                    {
+                        foreach (var parameter in parameters)
+                        {
+                            cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                        }
+                    }
+
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
                         DataTable table = new DataTable();

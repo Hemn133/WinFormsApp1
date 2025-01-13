@@ -37,7 +37,117 @@ namespace WinFormsApp1
             textBox1.Text = total.ToString("0.00");
         }
 
+        private void LoadSalesData(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                // Ensure endDate is inclusive by setting it to the last second of the day
+                endDate = endDate.AddDays(1).AddSeconds(-1);
 
+                // Query to fetch sales data within the date range
+                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount " +
+                               "FROM Sales " +
+                               "WHERE SaleDate >= @StartDate AND SaleDate <= @EndDate";
+
+                using (SqlConnection conn = new SqlConnection(db.ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@StartDate", startDate);
+                        cmd.Parameters.AddWithValue("@EndDate", endDate);
+
+                        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                        DataTable salesData = new DataTable();
+                        adapter.Fill(salesData);
+
+                        // Add Button columns to the DataGridView if not already added
+                        if (!dataGridView2.Columns.Contains("ViewDetails"))
+                        {
+                            DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
+                            {
+                                Name = "ViewDetails",
+                                HeaderText = "زانیاریەکان",
+                                Text = "زانیاریەکان",
+                                UseColumnTextForButtonValue = true
+                            };
+                            dataGridView2.Columns.Add(btnViewDetails);
+                        }
+                        if (!dataGridView2.Columns.Contains("Print"))
+                        {
+                            DataGridViewButtonColumn btnPrint = new DataGridViewButtonColumn
+                            {
+                                Name = "Print",
+                                HeaderText = "چاپکردن",
+                                Text = "چاپکردن",
+                                UseColumnTextForButtonValue = true
+                            };
+                            dataGridView2.Columns.Add(btnPrint);
+                        }
+
+                        // Bind data to DataGridView
+                        dataGridView2.DataSource = salesData;
+
+                        // Hide SaleID column
+                        if (dataGridView2.Columns.Contains("SaleID"))
+                        {
+                            dataGridView2.Columns["SaleID"].Visible = false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading sales data: " + ex.Message);
+            }
+
+
+            try
+            {
+                // Query to fetch sales data within the specified date range
+                string query = @"SELECT SaleID, SaleDate, UserAccountID, TotalAmount 
+                         FROM Sales 
+                         WHERE SaleDate BETWEEN @startdate AND @enddate";
+
+                // Create a dictionary to hold the parameters
+                var parameters = new Dictionary<string, object>
+        {
+            { "@startdate", startDate }, // Ensure case matches query
+            { "@enddate", endDate }     // Ensure case matches query
+        };
+
+                // Fetch data using the query and parameters
+                DataTable salesData = db.GetDataTable(query, parameters);
+
+                // Bind data to the DataGridView
+                dataGridView2.DataSource = salesData;
+
+                // Set column headers
+                if (dataGridView2.Columns.Contains("SaleDate"))
+                {
+                    dataGridView2.Columns["SaleDate"].HeaderText = "بەرواری فرۆشتن";
+                }
+
+                if (dataGridView2.Columns.Contains("TotalAmount"))
+                {
+                    dataGridView2.Columns["TotalAmount"].HeaderText = "کۆی گشتی";
+                }
+
+                if (dataGridView2.Columns.Contains("UserAccountID"))
+                {
+                    dataGridView2.Columns["UserAccountID"].HeaderText = "فرۆشراوە لە لایەن";
+                }
+
+                // Hide the SaleID column if necessary
+                if (dataGridView2.Columns.Contains("SaleID"))
+                {
+                    dataGridView2.Columns["SaleID"].Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading sales data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
 
 
@@ -77,9 +187,9 @@ namespace WinFormsApp1
             style(dataGridView1);
             style(dataGridView2);
 
-
-
-
+            // Set default values for DateTimePickers
+            dateTimePicker1.Value = DateTime.Today; ; // Start date
+            dateTimePicker2.Value = DateTime.Today; // End date
 
             try
             {
@@ -111,7 +221,6 @@ namespace WinFormsApp1
                     comboBox1.SelectedIndex = -1; // Clear selection initially
                 }
 
-
                 // Disable Customer ComboBox initially
                 comboBox1.Enabled = false;
             }
@@ -119,49 +228,9 @@ namespace WinFormsApp1
             {
                 MessageBox.Show("Error while loading data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            try
-            {
-                // Query to fetch Sales data
-                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount FROM Sales";
 
-                // Fetch data using your database class
-                DataTable salesData = db.GetDataTable(query);
-
-                // Add a Button column to view details if not already added
-                if (!dataGridView2.Columns.Contains("ViewDetails"))
-                {
-                    DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
-                    {
-                        Name = "ViewDetails",
-                        HeaderText = "Details",
-                        Text = "View Details",
-                        UseColumnTextForButtonValue = true
-                    };
-                    dataGridView2.Columns.Add(btnViewDetails);
-                }
-                if (!dataGridView2.Columns.Contains("Print"))
-                {
-                    DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
-                    {
-                        Name = "Print",
-                        HeaderText = "چاپکردن",
-                        Text = "Print",
-                        UseColumnTextForButtonValue = true
-                    };
-                    dataGridView2.Columns.Add(btnViewDetails);
-                }
-
-                // Bind data to the DataGridView
-                dataGridView2.DataSource = salesData;
-                if (dataGridView2.Columns.Contains("SaleID"))
-                {
-                    dataGridView2.Columns["SaleID"].Visible = false; // Hide the SaleID column from the user
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading sales data: " + ex.Message);
-            }
+            // Load sales filtered by default date range
+            LoadSalesData(dateTimePicker1.Value, dateTimePicker2.Value);
 
 
         }
@@ -298,6 +367,11 @@ namespace WinFormsApp1
 
                     int saleID = (int)cmdSale.ExecuteScalar();
 
+
+
+
+
+
                     // Insert into SalesDetails for each product
                     foreach (DataGridViewRow row in dataGridView1.Rows)
                     {
@@ -313,8 +387,23 @@ namespace WinFormsApp1
                         cmdDetail.Parameters.AddWithValue("@ProductID", productID);
                         cmdDetail.Parameters.AddWithValue("@Quantity", quantity);
                         cmdDetail.Parameters.AddWithValue("@Subtotal", subtotal);
-
                         cmdDetail.ExecuteNonQuery();
+
+                        // Update Product quantity
+                        string updateProductQuery = "UPDATE Product SET QuantityAvailable = QuantityAvailable - @Quantity WHERE ProductID = @ProductID";
+                        SqlCommand cmdUpdate = new SqlCommand(updateProductQuery, conn, transaction);
+                        cmdUpdate.Parameters.AddWithValue("@Quantity", quantity);
+                        cmdUpdate.Parameters.AddWithValue("@ProductID", productID);
+                        cmdUpdate.ExecuteNonQuery();
+                    }
+                    // Update customer's debt if sale is on credit
+                    if (isCredit)
+                    {
+                        string updateCustomerDebtQuery = "UPDATE Customer SET TotalDebt = TotalDebt + @TotalAmount WHERE CustomerID = @CustomerID";
+                        SqlCommand cmdDebt = new SqlCommand(updateCustomerDebtQuery, conn, transaction);
+                        cmdDebt.Parameters.AddWithValue("@TotalAmount", totalAmount);
+                        cmdDebt.Parameters.AddWithValue("@CustomerID", customerID);
+                        cmdDebt.ExecuteNonQuery();
                     }
 
                     // Commit the transaction
@@ -341,17 +430,32 @@ namespace WinFormsApp1
         {
             try
             {
-                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount FROM Sales";
+                // Get the start and end dates from the DateTimePickers
+                DateTime startDate = dateTimePicker1.Value.Date; // Ensure only the date part is considered
+                DateTime endDate = dateTimePicker2.Value.Date.AddDays(1).AddTicks(-1); // Include the entire end day
 
-                // Fetch updated sales data
-                DataTable salesData = db.GetDataTable(query);
+                // Update the query to filter by the date range
+                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount " +
+                               "FROM Sales " +
+                               "WHERE SaleDate BETWEEN @startDate AND @endDate";
+
+                // Pass the parameters to the query
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+        {
+            { "@startDate", startDate },
+            { "@endDate", endDate }
+        };
+
+                // Fetch the filtered sales data
+                DataTable salesData = db.GetDataTable(query, parameters);
 
                 // Rebind data to DataGridView2
                 dataGridView2.DataSource = salesData;
 
+                // Optionally hide the SaleID column
                 if (dataGridView2.Columns.Contains("SaleID"))
                 {
-                    dataGridView2.Columns["SaleID"].Visible = false; // Hide the SaleID column from the user
+                    dataGridView2.Columns["SaleID"].Visible = false;
                 }
             }
             catch (Exception ex)
