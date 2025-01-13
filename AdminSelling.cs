@@ -546,7 +546,7 @@ namespace WinFormsApp1
                 // Check if no rows were returned
                 if (salesData.Rows.Count == 0)
                 {
-                    MessageBox.Show("No sales found for the selected date range.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("هیچ فرۆشتنێک نییە لەم بەروارە.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)

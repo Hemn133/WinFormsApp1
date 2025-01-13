@@ -21,11 +21,12 @@ namespace WinFormsApp1
             this.saleID = saleID;
             db = new DB(); // Initialize the DB class
         }
+
         private void style(DataGridView datagridview)
         {
-            datagridview.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
-            datagridview.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
-            datagridview.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
+            datagridview.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular);
+            datagridview.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal;
+            datagridview.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             datagridview.AllowUserToAddRows = false;
             datagridview.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
             datagridview.RowTemplate.Height = 40;
@@ -47,25 +48,45 @@ namespace WinFormsApp1
         private void ReverseColumnsOrder(DataGridView dataGridView)
         {
             int columnCount = dataGridView.Columns.Count;
-
             for (int i = 0; i < columnCount; i++)
             {
                 dataGridView.Columns[i].DisplayIndex = columnCount - 1 - i;
             }
         }
+
         private void FormSaleDetails_Load(object sender, EventArgs e)
         {
             style(dataGridViewSaleDetails);
+
             try
             {
-                // Query to fetch SalesDetails for the specific SaleID
-                string query = "SELECT SalesDetailID, ProductID, Quantity, Subtotal FROM SalesDetails WHERE SaleID = @SaleID";
+                // Query to fetch Sale details with joins
+                string query = @"
+                    SELECT 
+                        P.ProductName AS [ناوی کاڵا], 
+                        SD.Quantity AS [دانە], 
+                        SD.Subtotal AS [نرخ], 
+                        U.Username AS [فرۆشراوە لە لایەن],  
+                        CASE 
+                            WHEN S.IsCredit = 1 THEN 'Debt' 
+                            ELSE 'Cash' 
+                        END AS [جۆری پارەدان],
+                        CASE 
+                            WHEN C.CustomerName IS NOT NULL THEN C.CustomerName
+                            ELSE '-'
+                        END AS [ناوی خاوەن قەرز]
+                    FROM Sales S
+                    INNER JOIN SalesDetails SD ON S.SaleID = SD.SaleID
+                    INNER JOIN Product P ON SD.ProductID = P.ProductID
+                    INNER JOIN UserAccount U ON S.UserAccountID = U.UserAccountID
+                    LEFT JOIN Customer C ON S.CustomerID = C.CustomerID
+                    WHERE S.SaleID = @SaleID";
 
                 // Prepare the parameters
                 Dictionary<string, object> parameters = new Dictionary<string, object>
-            {
-                { "@SaleID", saleID }
-            };
+                {
+                    { "@SaleID", saleID }
+                };
 
                 // Fetch data from the database
                 DataTable salesDetailsData = db.GetDataTableParam(query, parameters);
@@ -76,13 +97,13 @@ namespace WinFormsApp1
             catch (Exception ex)
             {
                 // Show error message if something goes wrong
-                MessageBox.Show("Error loading sale details: " + ex.Message);
+                MessageBox.Show("Error loading sale details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void dataGridViewSaleDetails_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            // Handle cell click events if needed
         }
     }
 }
