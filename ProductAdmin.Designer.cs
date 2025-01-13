@@ -137,6 +137,7 @@
             dataGridView1.Size = new Size(1600, 785);
             dataGridView1.TabIndex = 27;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             // 
             // label6
             // 

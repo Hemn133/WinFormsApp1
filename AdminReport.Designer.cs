@@ -71,6 +71,7 @@
             dataGridViewReports.ReadOnly = true;
             dataGridViewReports.Size = new Size(1610, 701);
             dataGridViewReports.TabIndex = 50;
+            dataGridViewReports.CellFormatting += dataGridViewReports_CellFormatting;
             // 
             // StartDatePicker
             // 
@@ -123,6 +124,7 @@
             txtTotalCashSales.Location = new Point(1346, 971);
             txtTotalCashSales.Multiline = true;
             txtTotalCashSales.Name = "txtTotalCashSales";
+            txtTotalCashSales.ReadOnly = true;
             txtTotalCashSales.Size = new Size(267, 55);
             txtTotalCashSales.TabIndex = 62;
             txtTotalCashSales.TextAlign = HorizontalAlignment.Center;
@@ -133,9 +135,11 @@
             txtTotalExpenses.Location = new Point(527, 971);
             txtTotalExpenses.Multiline = true;
             txtTotalExpenses.Name = "txtTotalExpenses";
+            txtTotalExpenses.ReadOnly = true;
             txtTotalExpenses.Size = new Size(267, 55);
             txtTotalExpenses.TabIndex = 63;
             txtTotalExpenses.TextAlign = HorizontalAlignment.Center;
+            txtTotalExpenses.TextChanged += txtTotalExpenses_TextChanged;
             // 
             // txtTotalDebtSales
             // 
@@ -143,6 +147,7 @@
             txtTotalDebtSales.Location = new Point(1073, 971);
             txtTotalDebtSales.Multiline = true;
             txtTotalDebtSales.Name = "txtTotalDebtSales";
+            txtTotalDebtSales.ReadOnly = true;
             txtTotalDebtSales.Size = new Size(267, 55);
             txtTotalDebtSales.TabIndex = 64;
             txtTotalDebtSales.TextAlign = HorizontalAlignment.Center;
@@ -153,6 +158,7 @@
             txtTotalDebtSettlements.Location = new Point(800, 971);
             txtTotalDebtSettlements.Multiline = true;
             txtTotalDebtSettlements.Name = "txtTotalDebtSettlements";
+            txtTotalDebtSettlements.ReadOnly = true;
             txtTotalDebtSettlements.Size = new Size(267, 55);
             txtTotalDebtSettlements.TabIndex = 65;
             txtTotalDebtSettlements.TextAlign = HorizontalAlignment.Center;
@@ -163,6 +169,7 @@
             txtNetTotal.Location = new Point(3, 971);
             txtNetTotal.Multiline = true;
             txtNetTotal.Name = "txtNetTotal";
+            txtNetTotal.ReadOnly = true;
             txtNetTotal.Size = new Size(267, 55);
             txtNetTotal.TabIndex = 66;
             txtNetTotal.TextAlign = HorizontalAlignment.Center;

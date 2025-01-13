@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WinFormsApp1
 {
@@ -160,6 +161,7 @@ namespace WinFormsApp1
             SELECT 
                 ds.DebtSettlementID,
                 c.CustomerName, 
+                c.CustomerID,
                 ds.AmountPaid, 
                 ds.PaymentDate 
             FROM DebtSettlement ds
@@ -167,6 +169,7 @@ namespace WinFormsApp1
 
                 DataTable settlementData = db.GetDataTable(settlementQuery);
                 dataGridView1.DataSource = settlementData;
+                dataGridView1.Columns["CustomerID"].Visible = false;
             }
             catch (Exception ex)
             {
@@ -409,6 +412,19 @@ namespace WinFormsApp1
             {
                 // Suppress the key if it's not a digit or control key
                 e.Handled = true;
+            }
+        }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "AmountPaid" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
             }
         }
     }

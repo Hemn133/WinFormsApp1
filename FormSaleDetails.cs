@@ -62,35 +62,35 @@ namespace WinFormsApp1
             {
                 // Query to fetch Sale details with joins
                 string query = @"
-                    SELECT 
-                        P.ProductName AS [ناوی کاڵا], 
-                        SD.Quantity AS [دانە], 
-                        SD.Subtotal AS [نرخ], 
-                        U.Username AS [فرۆشراوە لە لایەن],  
-                        CASE 
-                            WHEN S.IsCredit = 1 THEN N'قەرز' 
-                            ELSE N'کاش' 
-                        END AS [جۆری پارەدان],
-                        CASE 
-                            WHEN C.CustomerName IS NOT NULL THEN C.CustomerName
-                            ELSE '-'
-                        END AS [ناوی خاوەن قەرز],
-CASE 
+    SELECT 
+        SD.SaleID AS [کۆدی پسوڵە], 
+        P.ProductName AS [ناوی کاڵا], 
+        SD.Quantity AS [دانە], 
+        SD.Subtotal AS [نرخ], 
+        U.Username AS [فرۆشراوە لە لایەن],  
+        CASE 
+            WHEN S.IsCredit = 1 THEN N'قەرز' 
+            ELSE N'کاش' 
+        END AS [جۆری پارەدان],
+        CASE 
+            WHEN C.CustomerName IS NOT NULL THEN C.CustomerName
+            ELSE '-'
+        END AS [ناوی خاوەن قەرز],
+        CASE 
             WHEN S.IsReturned = 1 THEN N'بەڵێ' 
             ELSE N'نەخێر' 
         END AS [گەڕاوەتەوە]
-                    FROM Sales S
-                    INNER JOIN SalesDetails SD ON S.SaleID = SD.SaleID
-                    INNER JOIN Product P ON SD.ProductID = P.ProductID
-                    INNER JOIN UserAccount U ON S.UserAccountID = U.UserAccountID
-                    LEFT JOIN Customer C ON S.CustomerID = C.CustomerID
-                    WHERE S.SaleID = @SaleID";
+    FROM Sales S
+    INNER JOIN SalesDetails SD ON S.SaleID = SD.SaleID
+    INNER JOIN Product P ON SD.ProductID = P.ProductID
+    INNER JOIN UserAccount U ON S.UserAccountID = U.UserAccountID
+    LEFT JOIN Customer C ON S.CustomerID = C.CustomerID
+    WHERE S.SaleID = @SaleID";
 
-                // Prepare the parameters
                 Dictionary<string, object> parameters = new Dictionary<string, object>
-                {
-                    { "@SaleID", saleID }
-                };
+{
+    { "@SaleID", saleID }
+};
 
                 // Fetch data from the database
                 DataTable salesDetailsData = db.GetDataTableParam(query, parameters);
@@ -102,6 +102,19 @@ CASE
             {
                 // Show error message if something goes wrong
                 MessageBox.Show("Error loading sale details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dataGridViewSaleDetails_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridViewSaleDetails.Columns[e.ColumnIndex].Name == "Subtotal" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
             }
         }
     }

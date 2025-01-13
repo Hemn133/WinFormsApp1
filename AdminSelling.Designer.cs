@@ -102,6 +102,7 @@
             dataGridView1.Size = new Size(487, 713);
             dataGridView1.TabIndex = 41;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             // 
             // isdebt
             // 
@@ -228,6 +229,7 @@
             dataGridView2.Size = new Size(1117, 753);
             dataGridView2.TabIndex = 54;
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
+            dataGridView2.CellFormatting += dataGridView2_CellFormatting;
             // 
             // label4
             // 

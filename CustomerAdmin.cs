@@ -169,7 +169,7 @@ namespace WinFormsApp1
 
 
 
-            
+
 
             RefreshDataGridView();
 
@@ -221,6 +221,19 @@ namespace WinFormsApp1
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "TotalDebt" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
             }
         }
     }

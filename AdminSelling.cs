@@ -16,17 +16,23 @@ namespace WinFormsApp1
     {
         DB db = new DB();
         private string _userRole;
+        int currentUserID = 0;
         public AdminSelling(string userRole)
         {
             InitializeComponent();
             _userRole = userRole;
+            if (userRole == "Admin")
+            {
+                currentUserID = 1;
+            }
+            else { currentUserID = 2; }
         }
 
-        public static int currentUserID = 1; // Replace this with the actual logic for retrieving the logged-in user's ID
+         // Replace this with the actual logic for retrieving the logged-in user's ID
 
         private void UpdateTotalAmount()
         {
-            
+
             decimal total = 0;
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -34,10 +40,11 @@ namespace WinFormsApp1
                 if (row.Cells["TotalPrice"].Value != null)
                 {
                     total += Convert.ToDecimal(row.Cells["TotalPrice"].Value);
+           
                 }
             }
 
-            textBox1.Text = total.ToString("0.00");
+            textBox1.Text = total.ToString("N0");
         }
 
         private void LoadSalesData(DateTime startDate, DateTime endDate)
@@ -64,14 +71,14 @@ namespace WinFormsApp1
                         adapter.Fill(salesData);
 
                         // Add Button columns to the DataGridView if not already added
-                            DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
-                            {
-                                Name = "ViewDetails",
-                                HeaderText = "زانیاریەکان",
-                                Text = "زانیاریەکان",
-                                UseColumnTextForButtonValue = true
-                            };
-                            dataGridView2.Columns.Add(btnViewDetails);
+                        DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
+                        {
+                            Name = "ViewDetails",
+                            HeaderText = "زانیاریەکان",
+                            Text = "زانیاریەکان",
+                            UseColumnTextForButtonValue = true
+                        };
+                        dataGridView2.Columns.Add(btnViewDetails);
                         DataGridViewButtonColumn btnReturn = new DataGridViewButtonColumn
                         {
                             Name = "Return",
@@ -80,14 +87,14 @@ namespace WinFormsApp1
                             UseColumnTextForButtonValue = true
                         };
                         dataGridView2.Columns.Add(btnReturn);
-                            DataGridViewButtonColumn btnPrint = new DataGridViewButtonColumn
-                            {
-                                Name = "Print",
-                                HeaderText = "چاپکردن",
-                                Text = "چاپکردن",
-                                UseColumnTextForButtonValue = true
-                            };
-                            dataGridView2.Columns.Add(btnPrint);
+                        DataGridViewButtonColumn btnPrint = new DataGridViewButtonColumn
+                        {
+                            Name = "Print",
+                            HeaderText = "چاپکردن",
+                            Text = "چاپکردن",
+                            UseColumnTextForButtonValue = true
+                        };
+                        dataGridView2.Columns.Add(btnPrint);
 
                         // Bind data to DataGridView
                         dataGridView2.DataSource = salesData;
@@ -133,7 +140,7 @@ namespace WinFormsApp1
                 dataGridView2.DataSource = salesData;
 
                 // Set column headers
-                
+
                 if (dataGridView2.Columns.Contains("SaleDate"))
                 {
                     dataGridView2.Columns["SaleDate"].HeaderText = "بەرواری فرۆشتن";
@@ -141,6 +148,7 @@ namespace WinFormsApp1
 
                 if (dataGridView2.Columns.Contains("TotalAmount"))
                 {
+
                     dataGridView2.Columns["TotalAmount"].HeaderText = "کۆی گشتی";
                 }
 
@@ -209,7 +217,7 @@ namespace WinFormsApp1
             style(dataGridView1);
             style(dataGridView2);
 
-            
+
 
             // Set default values for DateTimePickers
             dateTimePicker1.Value = DateTime.Today; ; // Start date
@@ -394,6 +402,7 @@ namespace WinFormsApp1
                     {
                         if (row.Cells["TotalPrice"].Value != null)
                         {
+
                             totalAmount += Convert.ToDecimal(row.Cells["TotalPrice"].Value);
                         }
                     }
@@ -660,6 +669,47 @@ namespace WinFormsApp1
         }
 
         private void ProductSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView2.Columns[e.ColumnIndex].Name == "TotalAmount" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+
+        }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "TotalPrice" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "UnitPrice" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }

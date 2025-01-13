@@ -44,12 +44,13 @@
             dataGridViewSaleDetails.ReadOnly = true;
             dataGridViewSaleDetails.Size = new Size(776, 426);
             dataGridViewSaleDetails.TabIndex = 0;
+            dataGridViewSaleDetails.CellFormatting += dataGridViewSaleDetails_CellFormatting;
             // 
             // FormSaleDetails
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(795, 445);
             Controls.Add(dataGridViewSaleDetails);
             Name = "FormSaleDetails";
             Text = "FormSaleDetails";

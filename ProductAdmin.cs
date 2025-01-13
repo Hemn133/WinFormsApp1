@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WinFormsApp1
 {
@@ -20,18 +21,20 @@ namespace WinFormsApp1
         }
         private void RefreshDataGridView()
         {
-            
+
             DB db = new DB();
             string query = "SELECT * FROM Product"; // Replace with your actual query
             DataTable dataTable = db.GetDataTable(query);
             dataGridView1.DataSource = dataTable;
 
             // Adjust column settings if needed
+
             dataGridView1.Columns["ProductID"].Visible = false;
+            dataGridView1.Columns["Discount"].HeaderText = "داشکاندن";
             dataGridView1.Columns["QuantityAvailable"].HeaderText = "دانە";
-            dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
             dataGridView1.Columns["PurchasePrice"].HeaderText = "نرخی کڕین";
             dataGridView1.Columns["SellingPrice"].HeaderText = "نرخی فرۆشتن";
+            dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
             ReverseColumnsOrder(dataGridView1);
         }
 
@@ -40,6 +43,12 @@ namespace WinFormsApp1
 
         private void ProductAdmin_Load(object sender, EventArgs e)
         {
+            if (_userRole == "Employee")
+            {
+                textBox1.Visible = false;
+
+            }
+
             DB db = new DB(); // Create an instance of the DB class
             string query = "SELECT * FROM Product"; // Replace with your actual query
 
@@ -48,10 +57,10 @@ namespace WinFormsApp1
 
             // Bind the DataTable to the DataGridView
             dataGridView1.DataSource = dataTable; // Replace 'dataGridView1' with the name of your DataGridView
-            
+
             dataGridView1.Columns["ProductID"].Visible = false;
+            dataGridView1.Columns["Discount"].HeaderText = "داشکاندن";
             dataGridView1.Columns["QuantityAvailable"].HeaderText = "دانە";
-            dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
             if (_userRole == "Admin")
             {
                 // Admin has full access
@@ -62,9 +71,15 @@ namespace WinFormsApp1
                 // Employee has limited access
                 dataGridView1.Columns["PurchasePrice"].Visible = false;
             }
-            
             dataGridView1.Columns["SellingPrice"].HeaderText = "نرخی فرۆشتن";
-            dataGridView1.Columns["Discount"].HeaderText = "داشکاندن";
+            dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
+
+
+
+
+
+
+
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
             dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
@@ -74,7 +89,7 @@ namespace WinFormsApp1
             dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridView1.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridView1.EnableHeadersVisualStyles = false;
-            ReverseColumnsOrder(dataGridView1);
+
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray;
             dataGridView1.RowsDefaultCellStyle.BackColor = Color.White;
@@ -83,6 +98,7 @@ namespace WinFormsApp1
             dataGridView1.GridColor = Color.Gray;
             dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
+            ReverseColumnsOrder(dataGridView1);
         }
 
         private void ReverseColumnsOrder(DataGridView dataGridView)
@@ -162,6 +178,8 @@ namespace WinFormsApp1
             string purchasePrice = PurchasePrice.Text.Trim();
             string salePrice = SalePrice.Text.Trim();
             string quantity = Quantity.Text.Trim();
+            string discount = textBox1.Text.Trim();
+
 
             // Validate input
             if (selectedProductID <= 0 || string.IsNullOrEmpty(productName) ||
@@ -260,6 +278,19 @@ namespace WinFormsApp1
             {
                 // Suppress the key if it's not a digit or control key
                 e.Handled = true;
+            }
+        }
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "PurchasePrice" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
             }
         }
     }

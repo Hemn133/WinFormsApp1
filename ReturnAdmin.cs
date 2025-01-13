@@ -146,10 +146,10 @@ namespace WinFormsApp1
         private void LoadSaleDetails(int saleId)
         {
             string query = @"
-        SELECT sd.ProductID, p.ProductName, sd.Quantity, sd.ReturnedQuantity 
-        FROM SalesDetails sd
-        JOIN Product p ON sd.ProductID = p.ProductID
-        WHERE sd.SaleID = @SaleID";
+    SELECT sd.ProductID, p.ProductName, sd.Quantity, sd.ReturnedQuantity 
+    FROM SalesDetails sd
+    JOIN Product p ON sd.ProductID = p.ProductID
+    WHERE sd.SaleID = @SaleID AND (sd.Quantity - sd.ReturnedQuantity) > 0";
 
             Dictionary<string, object> parameters = new Dictionary<string, object>
     {
@@ -164,6 +164,12 @@ namespace WinFormsApp1
                 // Bind to DataGridView
                 dataGridView1.DataSource = saleDetails;
 
+                // Rename DataGridView column headers
+                dataGridView1.Columns["ProductID"].HeaderText = "کۆدی کاڵا";
+                dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
+                dataGridView1.Columns["Quantity"].HeaderText = "دانە";
+                dataGridView1.Columns["ReturnedQuantity"].HeaderText = "ژمارەی کاڵای گەڕاوە";
+
                 // Populate ComboBox with product names
                 ProductSelection.Items.Clear();
                 foreach (DataRow row in saleDetails.Rows)
@@ -173,14 +179,12 @@ namespace WinFormsApp1
             }
             else
             {
-                MessageBox.Show("هێچ پسوڵەیەک نەدۆزرایەوە.");
+                MessageBox.Show("هێچ کاڵایەک بۆ گەڕاندن بەردەست نییە.");
             }
-
         }
 
         private void addtolist_Click(object sender, EventArgs e)
         {
-
             if (dataGridView2.Columns.Count == 0) // Only set up columns once
             {
                 dataGridView2.Columns.Clear();
@@ -189,14 +193,21 @@ namespace WinFormsApp1
                 dataGridView2.Columns.Add("Quantity", "گەڕاوە");
             }
 
-            // Assuming `dataGridView1` contains the sale details
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
                     var selectedProductID = row.Cells["ProductID"].Value;
                     var selectedProductName = row.Cells["ProductName"].Value;
-                    var returnQuantity = numericUpDown1.Value; // Use the NumericUpDown value
+                    var remainingQuantity = Convert.ToInt32(row.Cells["Quantity"].Value) -
+                                            Convert.ToInt32(row.Cells["ReturnedQuantity"].Value);
+                    var returnQuantity = (int)numericUpDown1.Value; // Use the NumericUpDown value
+
+                    if (returnQuantity > remainingQuantity)
+                    {
+                        MessageBox.Show($"ژمارەی گەڕاندن زیاترە لە ژمارەی بەردەست ({remainingQuantity}).");
+                        return;
+                    }
 
                     if (selectedProductID != null && selectedProductName != null)
                     {
@@ -357,14 +368,25 @@ namespace WinFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int saleID = Convert.ToInt32(ExpenseAmount.Text); // Replace with your SaleID input field
+            // Display a confirmation dialog
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to process this return? This action cannot be undone.",
+                "Confirm Return",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
 
-            string getSalesDetailsQuery = @"
+            // Proceed only if the user clicks "Yes"
+            if (result == DialogResult.Yes)
+            {
+                int saleID = Convert.ToInt32(ExpenseAmount.Text); // Replace with your SaleID input field
+
+                string getSalesDetailsQuery = @"
         SELECT ProductID, Quantity 
         FROM SalesDetails
         WHERE SaleID = @SaleID;";
 
-            string updateSalesDetailsQuery = @"
+                string updateSalesDetailsQuery = @"
         UPDATE SalesDetails
         SET 
             ReturnedQuantity = Quantity,
@@ -373,72 +395,78 @@ namespace WinFormsApp1
         WHERE 
             SaleID = @SaleID;";
 
-            string updateProductStockQuery = @"
+                string updateProductStockQuery = @"
         UPDATE Product
         SET 
             QuantityAvailable = QuantityAvailable + @ReturnedQuantity
         WHERE 
             ProductID = @ProductID;";
 
-            string updateSalesQuery = @"
+                string updateSalesQuery = @"
         UPDATE Sales
         SET 
             IsReturned = 1,
-TotalAmount=0
+            TotalAmount = 0
         WHERE 
             SaleID = @SaleID;";
 
-            DB db = new DB();
+                DB db = new DB();
 
-            try
-            {
-                string getSalesDetailsQueryy = @"
+                try
+                {
+                    string getSalesDetailsQueryy = @"
     SELECT SalesDetailID, ProductID, Quantity, Subtotal 
     FROM SalesDetails 
     WHERE SaleID = @SaleID";
 
-                DataTable salesDetails;
+                    DataTable salesDetails;
 
-                using (SqlDataReader reader = db.ExecuteReader(getSalesDetailsQuery, new Dictionary<string, object>
-{
-    { "@SaleID", saleID }
-}))
-                {
-                    // Create and populate the DataTable
-                    salesDetails = new DataTable();
-                    salesDetails.Load(reader);
-                }
-
-                // Update Product stock for each item in the Sale
-                foreach (DataRow row in salesDetails.Rows)
-                {
-                    int productID = Convert.ToInt32(row["ProductID"]);
-                    int quantity = Convert.ToInt32(row["Quantity"]);
-
-                    db.ExecuteNonQuery(updateProductStockQuery, new Dictionary<string, object>
+                    using (SqlDataReader reader = db.ExecuteReader(getSalesDetailsQuery, new Dictionary<string, object>
             {
-                { "@ProductID", productID },
-                { "@ReturnedQuantity", quantity }
+                { "@SaleID", saleID }
+            }))
+                    {
+                        // Create and populate the DataTable
+                        salesDetails = new DataTable();
+                        salesDetails.Load(reader);
+                    }
+
+                    // Update Product stock for each item in the Sale
+                    foreach (DataRow row in salesDetails.Rows)
+                    {
+                        int productID = Convert.ToInt32(row["ProductID"]);
+                        int quantity = Convert.ToInt32(row["Quantity"]);
+
+                        db.ExecuteNonQuery(updateProductStockQuery, new Dictionary<string, object>
+                {
+                    { "@ProductID", productID },
+                    { "@ReturnedQuantity", quantity }
+                });
+                    }
+
+                    // Update SalesDetails
+                    db.ExecuteNonQuery(updateSalesDetailsQuery, new Dictionary<string, object>
+            {
+                { "@SaleID", saleID }
             });
-                }
 
-                // Update SalesDetails
-                db.ExecuteNonQuery(updateSalesDetailsQuery, new Dictionary<string, object>
-        {
-            { "@SaleID", saleID }
-        });
-
-                // Mark the Sale as Returned
-                db.ExecuteNonQuery(updateSalesQuery, new Dictionary<string, object>
-        {
-            { "@SaleID", saleID }
-        });
-
-                MessageBox.Show("Full return processed successfully.");
-            }
-            catch (Exception ex)
+                    // Mark the Sale as Returned
+                    db.ExecuteNonQuery(updateSalesQuery, new Dictionary<string, object>
             {
-                MessageBox.Show($"An error occurred: {ex.Message}");
+                { "@SaleID", saleID }
+            });
+
+                    MessageBox.Show("گەڕانەوەی پسوڵە سەرکەوتوبوو.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred: {ex.Message}");
+                }
+            }
+            else
+            {
+                // If the user clicks "No," do nothing or show a message if needed.
+                
             }
         }
 
@@ -466,6 +494,19 @@ TotalAmount=0
                     break;
                 }
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            // Clear all rows from dataGridView2
+            dataGridView2.Rows.Clear();
+
+            // Optionally, you can also clear the columns if needed
+            // dataGridView2.Columns.Clear();
+
+            MessageBox.Show("DataGridView has been cleared.");
+
         }
     }
 

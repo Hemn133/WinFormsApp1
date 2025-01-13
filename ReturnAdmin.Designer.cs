@@ -200,6 +200,7 @@
             button3.TabIndex = 64;
             button3.Text = "سڕینەوە";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // button4
             // 

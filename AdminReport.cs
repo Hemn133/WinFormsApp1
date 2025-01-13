@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace WinFormsApp1
@@ -26,30 +27,40 @@ namespace WinFormsApp1
 
             // Query for daily data
             string dailyQuery = @"
-        SELECT 
-    CONVERT(DATE, s.SaleDate) AS [Date],
+       WITH DateTable AS (
+    SELECT @StartDate AS [Date]
+    UNION ALL
+    SELECT DATEADD(DAY, 1, [Date])
+    FROM DateTable
+    WHERE [Date] < @EndDate
+)
+
+SELECT 
+    dt.[Date],
     SUM(CASE WHEN s.IsCredit = 0 THEN s.TotalAmount ELSE 0 END) AS CashSales,
     SUM(CASE WHEN s.IsCredit = 1 THEN s.TotalAmount ELSE 0 END) AS DebtSales,
     ISNULL(ds.TotalDebtSettled, 0) AS DebtSettlements,
     ISNULL(e.TotalExpenses, 0) AS Expenses
-FROM Sales s
+FROM DateTable dt
+LEFT JOIN Sales s ON CONVERT(DATE, s.SaleDate) = dt.[Date]
 LEFT JOIN (
     SELECT 
         CONVERT(DATE, PaymentDate) AS PaymentDate, 
         SUM(AmountPaid) AS TotalDebtSettled
     FROM DebtSettlement
     GROUP BY CONVERT(DATE, PaymentDate)
-) ds ON CONVERT(DATE, s.SaleDate) = ds.PaymentDate
+) ds ON ds.PaymentDate = dt.[Date]
 LEFT JOIN (
     SELECT 
         CONVERT(DATE, ExpenseDate) AS ExpenseDate, 
         SUM(Amount) AS TotalExpenses
     FROM Expenses
     GROUP BY CONVERT(DATE, ExpenseDate)
-) e ON CONVERT(DATE, s.SaleDate) = e.ExpenseDate
-WHERE s.SaleDate BETWEEN @StartDate AND @EndDate
-GROUP BY CONVERT(DATE, s.SaleDate), ds.TotalDebtSettled, e.TotalExpenses
-ORDER BY [Date];";
+) e ON e.ExpenseDate = dt.[Date]
+WHERE dt.[Date] BETWEEN @StartDate AND @EndDate
+GROUP BY dt.[Date], ds.TotalDebtSettled, e.TotalExpenses
+ORDER BY dt.[Date];
+";
 
             DataTable dailyData = ExecuteQueryToDataTable(dailyQuery, new Dictionary<string, object>
     {
@@ -92,10 +103,16 @@ ORDER BY [Date];";
             // Query for totals
             string totalsQuery = @"
         SELECT 
-    SUM(CASE WHEN s.IsCredit = 0 THEN s.TotalAmount ELSE 0 END) AS TotalCashSales,
-    SUM(CASE WHEN s.IsCredit = 1 THEN s.TotalAmount ELSE 0 END) AS TotalDebtSales,
+    ISNULL(SUM(CASE WHEN s.IsCredit = 0 THEN s.TotalAmount ELSE 0 END), 0) AS TotalCashSales,
+    ISNULL(SUM(CASE WHEN s.IsCredit = 1 THEN s.TotalAmount ELSE 0 END), 0) AS TotalDebtSales,
     ISNULL(SUM(ds.TotalDebtSettled), 0) AS TotalDebtSettlements,
-    ISNULL(SUM(e.TotalExpenses), 0) AS TotalExpenses
+    ISNULL(
+        (
+            SELECT ISNULL(SUM(Amount), 0)
+            FROM Expenses
+            WHERE CONVERT(DATE, ExpenseDate) BETWEEN @StartDate AND @EndDate
+        ), 0
+    ) AS TotalExpenses
 FROM Sales s
 LEFT JOIN (
     SELECT 
@@ -105,21 +122,18 @@ LEFT JOIN (
     WHERE PaymentDate BETWEEN @StartDate AND @EndDate
     GROUP BY CONVERT(DATE, PaymentDate)
 ) ds ON CONVERT(DATE, s.SaleDate) = ds.PaymentDate
-LEFT JOIN (
-    SELECT 
-        CONVERT(DATE, ExpenseDate) AS ExpenseDate, 
-        SUM(Amount) AS TotalExpenses
-    FROM Expenses
-    WHERE ExpenseDate BETWEEN @StartDate AND @EndDate
-    GROUP BY CONVERT(DATE, ExpenseDate)
-) e ON CONVERT(DATE, s.SaleDate) = e.ExpenseDate
-WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;";
+WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;
+";
 
             DataTable totalsData = ExecuteQueryToDataTable(totalsQuery, new Dictionary<string, object>
     {
         { "@StartDate", startDate },
         { "@EndDate", endDate }
-    });
+    }
+
+
+
+            );
 
             // Update summary fields
             if (totalsData.Rows.Count > 0)
@@ -129,11 +143,20 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;";
                 txtTotalExpenses.Text = row["TotalExpenses"].ToString();
                 txtTotalDebtSales.Text = row["TotalDebtSales"].ToString();
                 txtTotalDebtSettlements.Text = row["TotalDebtSettlements"].ToString();
-
-                decimal netTotal = Convert.ToDecimal(row["TotalCashSales"]) +
+                if (row["TotalCashSales"] == null || row["TotalDebtSettlements"] == null)
+                {
+                    decimal netTotal = Convert.ToDecimal(row["TotalExpenses"]);
+                    txtNetTotal.Text = netTotal.ToString("C");
+                }
+                else
+                {
+                    decimal netTotal = Convert.ToDecimal(row["TotalCashSales"]) +
                                    Convert.ToDecimal(row["TotalDebtSettlements"]) -
                                    Convert.ToDecimal(row["TotalExpenses"]);
-                txtNetTotal.Text = netTotal.ToString("C");
+                    txtNetTotal.Text = netTotal.ToString("C");
+                }
+
+
             }
         }
 
@@ -168,6 +191,8 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;";
         {
             style(dataGridViewReports);
             ReverseColumnsOrder(dataGridViewReports);
+
+           
         }
 
 
@@ -193,7 +218,7 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;";
             datagridview.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
             datagridview.DefaultCellStyle.SelectionForeColor = Color.White;
             datagridview.RowHeadersVisible = false;
-           
+
         }
 
         private void ReverseColumnsOrder(DataGridView dataGridView)
@@ -203,6 +228,54 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;";
             {
                 dataGridView.Columns[i].DisplayIndex = columnCount - 1 - i;
             }
+        }
+
+        private void txtTotalExpenses_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridViewReports_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dataGridViewReports.Columns[e.ColumnIndex].Name == "Expenses" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+            if (dataGridViewReports.Columns[e.ColumnIndex].Name == "CashSales" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+            if (dataGridViewReports.Columns[e.ColumnIndex].Name == "DebtSales" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+            if (dataGridViewReports.Columns[e.ColumnIndex].Name == "DebtSettlements" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+
+
+
         }
     }
 }
