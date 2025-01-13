@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WinFormsApp1
+{
+    public partial class FormSaleDetails : Form
+    {
+        private int saleID; // The SaleID to filter the details
+        private DB db; // Instance of your DB class
+
+        public FormSaleDetails(int saleID)
+        {
+            InitializeComponent();
+            this.saleID = saleID;
+            db = new DB(); // Initialize the DB class
+        }
+        private void style(DataGridView datagridview)
+        {
+            datagridview.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
+            datagridview.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
+            datagridview.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
+            datagridview.AllowUserToAddRows = false;
+            datagridview.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            datagridview.RowTemplate.Height = 40;
+            datagridview.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            datagridview.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            datagridview.EnableHeadersVisualStyles = false;
+            datagridview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            datagridview.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray;
+            datagridview.RowsDefaultCellStyle.BackColor = Color.White;
+            datagridview.BorderStyle = BorderStyle.Fixed3D;
+            datagridview.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            datagridview.GridColor = Color.Gray;
+            datagridview.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
+            datagridview.DefaultCellStyle.SelectionForeColor = Color.White;
+            ReverseColumnsOrder(datagridview);
+            datagridview.RowHeadersVisible = false;
+        }
+
+        private void ReverseColumnsOrder(DataGridView dataGridView)
+        {
+            int columnCount = dataGridView.Columns.Count;
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                dataGridView.Columns[i].DisplayIndex = columnCount - 1 - i;
+            }
+        }
+        private void FormSaleDetails_Load(object sender, EventArgs e)
+        {
+            style(dataGridViewSaleDetails);
+            try
+            {
+                // Query to fetch SalesDetails for the specific SaleID
+                string query = "SELECT SalesDetailID, ProductID, Quantity, Subtotal FROM SalesDetails WHERE SaleID = @SaleID";
+
+                // Prepare the parameters
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "@SaleID", saleID }
+            };
+
+                // Fetch data from the database
+                DataTable salesDetailsData = db.GetDataTableParam(query, parameters);
+
+                // Bind the data to the DataGridView
+                dataGridViewSaleDetails.DataSource = salesDetailsData;
+            }
+            catch (Exception ex)
+            {
+                // Show error message if something goes wrong
+                MessageBox.Show("Error loading sale details: " + ex.Message);
+            }
+        }
+
+        private void dataGridViewSaleDetails_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+    }
+}

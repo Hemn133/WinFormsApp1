@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace WinFormsApp1
 {
     public partial class AdminSelling : UserControl
     {
+        DB db = new DB();
         public AdminSelling()
         {
             InitializeComponent();
@@ -39,7 +41,27 @@ namespace WinFormsApp1
 
 
 
-
+        private void style(DataGridView datagridview)
+        {
+            datagridview.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
+            datagridview.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
+            datagridview.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
+            datagridview.AllowUserToAddRows = false;
+            datagridview.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            datagridview.RowTemplate.Height = 40;
+            datagridview.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            datagridview.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            datagridview.EnableHeadersVisualStyles = false;
+            datagridview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            datagridview.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray;
+            datagridview.RowsDefaultCellStyle.BackColor = Color.White;
+            datagridview.BorderStyle = BorderStyle.Fixed3D;
+            datagridview.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            datagridview.GridColor = Color.Gray;
+            datagridview.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
+            datagridview.DefaultCellStyle.SelectionForeColor = Color.White;
+            ReverseColumnsOrder(datagridview);
+        }
         private void AdminSelling_Load(object sender, EventArgs e)
         {
 
@@ -52,28 +74,12 @@ namespace WinFormsApp1
                 dataGridView1.Columns.Add("UnitPrice", "نرخی دانە");
                 dataGridView1.Columns.Add("TotalPrice", "کۆی گشتی");
             }
+            style(dataGridView1);
+            style(dataGridView2);
 
-            dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
-            dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
-            dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.DefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dataGridView1.RowTemplate.Height = 40;
-            dataGridView1.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView1.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridView1.EnableHeadersVisualStyles = false;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Color.LightGray;
-            dataGridView1.RowsDefaultCellStyle.BackColor = Color.White;
-            dataGridView1.BorderStyle = BorderStyle.Fixed3D;
-            dataGridView1.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dataGridView1.GridColor = Color.Gray;
-            dataGridView1.DefaultCellStyle.SelectionBackColor = Color.DarkBlue;
-            dataGridView1.DefaultCellStyle.SelectionForeColor = Color.White;
-            ReverseColumnsOrder(dataGridView1);
 
-      
-        DB db = new DB();
+
+
 
             try
             {
@@ -90,7 +96,7 @@ namespace WinFormsApp1
                 }
                 else
                 {
-                    MessageBox.Show("!هیچ کاڵایەک لە کۆگادا بەردەست نییە", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("!هیچ کاڵایەک لە کۆگادا بوونی نییە", "ئاگادارکردنەوە", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
                 // Populate Customer ComboBox
@@ -104,7 +110,7 @@ namespace WinFormsApp1
                     comboBox1.ValueMember = "CustomerID";
                     comboBox1.SelectedIndex = -1; // Clear selection initially
                 }
-               
+
 
                 // Disable Customer ComboBox initially
                 comboBox1.Enabled = false;
@@ -112,6 +118,49 @@ namespace WinFormsApp1
             catch (Exception ex)
             {
                 MessageBox.Show("Error while loading data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            try
+            {
+                // Query to fetch Sales data
+                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount FROM Sales";
+
+                // Fetch data using your database class
+                DataTable salesData = db.GetDataTable(query);
+
+                // Add a Button column to view details if not already added
+                if (!dataGridView2.Columns.Contains("ViewDetails"))
+                {
+                    DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
+                    {
+                        Name = "ViewDetails",
+                        HeaderText = "Details",
+                        Text = "View Details",
+                        UseColumnTextForButtonValue = true
+                    };
+                    dataGridView2.Columns.Add(btnViewDetails);
+                }
+                if (!dataGridView2.Columns.Contains("Print"))
+                {
+                    DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
+                    {
+                        Name = "Print",
+                        HeaderText = "چاپکردن",
+                        Text = "Print",
+                        UseColumnTextForButtonValue = true
+                    };
+                    dataGridView2.Columns.Add(btnViewDetails);
+                }
+
+                // Bind data to the DataGridView
+                dataGridView2.DataSource = salesData;
+                if (dataGridView2.Columns.Contains("SaleID"))
+                {
+                    dataGridView2.Columns["SaleID"].Visible = false; // Hide the SaleID column from the user
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading sales data: " + ex.Message);
             }
 
 
@@ -145,12 +194,12 @@ namespace WinFormsApp1
                 int productID = (int)ProductSelection.SelectedValue;
 
                 // Fetch unit price from the database
-                DB db = new DB();
+
                 string query = "SELECT SellingPrice FROM Product WHERE ProductID = @ProductID";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
-        {
-            { "@ProductID", productID }
-        };
+{
+    { "@ProductID", productID }
+};
 
                 object result = db.ExecuteScalar(query, parameters);
 
@@ -194,7 +243,11 @@ namespace WinFormsApp1
 
                 try
                 {
-                    DB db = new DB();
+                    if (dataGridView1.RowCount == 0)
+                    {
+                        MessageBox.Show("Data is Empty!");
+                        return;
+                    }
 
                     // Calculate total amount from DataGridView
                     decimal totalAmount = 0;
@@ -223,9 +276,8 @@ namespace WinFormsApp1
 
                         if (availableQuantity < quantity)
                         {
-                            // Rollback transaction and show an error
                             transaction.Rollback();
-                            MessageBox.Show($"Insufficient stock for Product ID {productID}. Available: {availableQuantity}, Requested: {quantity}.",
+                            MessageBox.Show($"ژمارەی دیاریکراو بەردەست نییە بۆ کاڵای کۆدی {productID}. ژمارەی بەردەست: {availableQuantity}, داواکراو: {quantity}.",
                                 "Stock Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
@@ -261,31 +313,20 @@ namespace WinFormsApp1
                         cmdDetail.Parameters.AddWithValue("@ProductID", productID);
                         cmdDetail.Parameters.AddWithValue("@Quantity", quantity);
                         cmdDetail.Parameters.AddWithValue("@Subtotal", subtotal);
+
                         cmdDetail.ExecuteNonQuery();
-
-                        // Update Product quantity
-                        string updateProductQuery = "UPDATE Product SET QuantityAvailable = QuantityAvailable - @Quantity WHERE ProductID = @ProductID";
-                        SqlCommand cmdUpdate = new SqlCommand(updateProductQuery, conn, transaction);
-                        cmdUpdate.Parameters.AddWithValue("@Quantity", quantity);
-                        cmdUpdate.Parameters.AddWithValue("@ProductID", productID);
-                        cmdUpdate.ExecuteNonQuery();
                     }
 
-                    // Update customer's debt if sale is on credit
-                    if (isCredit)
-                    {
-                        string updateCustomerDebtQuery = "UPDATE Customer SET TotalDebt = TotalDebt + @TotalAmount WHERE CustomerID = @CustomerID";
-                        SqlCommand cmdDebt = new SqlCommand(updateCustomerDebtQuery, conn, transaction);
-                        cmdDebt.Parameters.AddWithValue("@TotalAmount", totalAmount);
-                        cmdDebt.Parameters.AddWithValue("@CustomerID", customerID);
-                        cmdDebt.ExecuteNonQuery();
-                    }
-
-                    // Commit transaction
+                    // Commit the transaction
                     transaction.Commit();
+                    MessageBox.Show("Sale saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    MessageBox.Show("Sale completed successfully!");
-                    button1.PerformClick(); // Reset form
+                    // Clear DataGridView1 for new entries
+                    dataGridView1.Rows.Clear();
+                    UpdateTotalAmount();
+
+                    // Refresh DataGridView2 to reflect the latest Sales data
+                    RefreshDataGridView2();
                 }
                 catch (Exception ex)
                 {
@@ -296,7 +337,32 @@ namespace WinFormsApp1
         }
 
 
-        
+        private void RefreshDataGridView2()
+        {
+            try
+            {
+                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount FROM Sales";
+
+                // Fetch updated sales data
+                DataTable salesData = db.GetDataTable(query);
+
+                // Rebind data to DataGridView2
+                dataGridView2.DataSource = salesData;
+
+                if (dataGridView2.Columns.Contains("SaleID"))
+                {
+                    dataGridView2.Columns["SaleID"].Visible = false; // Hide the SaleID column from the user
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error refreshing sales data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+
+
 
         private void isdebt_CheckedChanged(object sender, EventArgs e)
         {
@@ -308,8 +374,87 @@ namespace WinFormsApp1
             dataGridView1.Rows.Clear();
             isdebt.Checked = false;
             comboBox1.Enabled = false;
-            textBox1.Text = "0.00";
+            textBox1.Text = "0";
             numericUpDown1.Value = 1;
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dataGridView2.Columns[e.ColumnIndex].Name == "ViewDetails")
+            {
+                try
+                {
+                    // Get the SaleID of the selected row
+                    int saleID = Convert.ToInt32(dataGridView2.Rows[e.RowIndex].Cells["SaleID"].Value);
+
+                    // Open the popup form
+                    FormSaleDetails detailsForm = new FormSaleDetails(saleID);
+                    detailsForm.ShowDialog(); // Use ShowDialog for modal behavior
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening sale details: " + ex.Message);
+                }
+            }
+            if (e.RowIndex >= 0 && dataGridView2.Columns[e.ColumnIndex].Name == "Print")
+            {
+                try
+                {
+                    MessageBox.Show("Printed");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening sale details: " + ex.Message);
+                }
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Get the start and end dates, stripping the time portion
+                DateTime startDate = dateTimePicker1.Value.Date;
+                DateTime endDate = dateTimePicker2.Value.Date;
+
+
+                // Query to fetch sales between the selected dates
+                string query = "SELECT SaleID, SaleDate, UserAccountID, TotalAmount FROM Sales WHERE SaleDate BETWEEN @StartDate AND @EndDate";
+
+                // Prepare parameters for the query
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+        {
+            { "@StartDate", startDate },
+            { "@EndDate", endDate }
+        };
+
+                // Fetch data from the database
+                DataTable salesData = db.GetDataTableParam(query, parameters);
+
+                // Bind the fetched data to the DataGridView
+                dataGridView2.DataSource = salesData;
+
+                // Check if no rows were returned
+                if (salesData.Rows.Count == 0)
+                {
+                    MessageBox.Show("No sales found for the selected date range.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions and display error messages
+                MessageBox.Show("Error fetching sales data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ProductSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

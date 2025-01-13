@@ -42,8 +42,15 @@
             label5 = new Label();
             numericUpDown1 = new NumericUpDown();
             button1 = new Button();
+            dataGridView2 = new DataGridView();
+            label4 = new Label();
+            dateTimePicker1 = new DateTimePicker();
+            dateTimePicker2 = new DateTimePicker();
+            label6 = new Label();
+            button2 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
             // 
             // label7
@@ -60,12 +67,15 @@
             // 
             // ProductSelection
             // 
+            ProductSelection.AutoCompleteMode = AutoCompleteMode.Suggest;
+            ProductSelection.AutoCompleteSource = AutoCompleteSource.ListItems;
             ProductSelection.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             ProductSelection.FormattingEnabled = true;
             ProductSelection.Location = new Point(1378, 154);
             ProductSelection.Name = "ProductSelection";
             ProductSelection.Size = new Size(235, 33);
             ProductSelection.TabIndex = 38;
+            ProductSelection.SelectedIndexChanged += ProductSelection_SelectedIndexChanged;
             // 
             // addtolist
             // 
@@ -82,11 +92,12 @@
             // dataGridView1
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(1126, 230);
+            dataGridView1.Location = new Point(1126, 267);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersVisible = false;
-            dataGridView1.Size = new Size(487, 750);
+            dataGridView1.Size = new Size(487, 713);
             dataGridView1.TabIndex = 41;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // isdebt
             // 
@@ -105,11 +116,11 @@
             // 
             save.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             save.ForeColor = Color.Teal;
-            save.Location = new Point(1126, 987);
+            save.Location = new Point(1126, 227);
             save.Name = "save";
-            save.Size = new Size(160, 34);
+            save.Size = new Size(487, 34);
             save.TabIndex = 43;
-            save.Text = "تۆمارکردن";
+            save.Text = "فرۆشتن";
             save.UseVisualStyleBackColor = true;
             save.Click += save_Click;
             // 
@@ -181,15 +192,17 @@
             // 
             numericUpDown1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             numericUpDown1.Location = new Point(1271, 154);
+            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(101, 33);
             numericUpDown1.TabIndex = 52;
+            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // button1
             // 
             button1.Font = new Font("NRT Bold", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button1.ForeColor = Color.Teal;
-            button1.Location = new Point(981, 304);
+            button1.Location = new Point(1126, 987);
             button1.Name = "button1";
             button1.Size = new Size(139, 33);
             button1.TabIndex = 53;
@@ -197,10 +210,82 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // dataGridView2
+            // 
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Location = new Point(3, 267);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.RowHeadersVisible = false;
+            dataGridView2.Size = new Size(1117, 753);
+            dataGridView2.TabIndex = 54;
+            dataGridView2.CellContentClick += dataGridView2_CellContentClick;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.BackColor = Color.WhiteSmoke;
+            label4.Font = new Font("NRT Bold", 24F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label4.ForeColor = Color.Teal;
+            label4.Location = new Point(916, 214);
+            label4.Name = "label4";
+            label4.Size = new Size(189, 47);
+            label4.TabIndex = 55;
+            label4.Text = "فرۆشراوەکان";
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.CalendarFont = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker1.CustomFormat = "dd-MM-yyyy";
+            dateTimePicker1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker1.Format = DateTimePickerFormat.Short;
+            dateTimePicker1.Location = new Point(342, 232);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(200, 33);
+            dateTimePicker1.TabIndex = 56;
+            // 
+            // dateTimePicker2
+            // 
+            dateTimePicker2.CustomFormat = "dd-MM-yyyy";
+            dateTimePicker2.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker2.Format = DateTimePickerFormat.Short;
+            dateTimePicker2.Location = new Point(99, 232);
+            dateTimePicker2.Name = "dateTimePicker2";
+            dateTimePicker2.Size = new Size(200, 33);
+            dateTimePicker2.TabIndex = 57;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("NRT Bold", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.ForeColor = Color.Teal;
+            label6.Location = new Point(305, 233);
+            label6.Name = "label6";
+            label6.Size = new Size(31, 30);
+            label6.TabIndex = 58;
+            label6.Text = "بۆ";
+            // 
+            // button2
+            // 
+            button2.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button2.ForeColor = Color.Teal;
+            button2.Location = new Point(3, 231);
+            button2.Name = "button2";
+            button2.Size = new Size(90, 34);
+            button2.TabIndex = 59;
+            button2.Text = "گەڕان";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // AdminSelling
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(button2);
+            Controls.Add(label6);
+            Controls.Add(dateTimePicker2);
+            Controls.Add(dateTimePicker1);
+            Controls.Add(label4);
+            Controls.Add(dataGridView2);
             Controls.Add(button1);
             Controls.Add(numericUpDown1);
             Controls.Add(label5);
@@ -220,6 +305,7 @@
             Load += AdminSelling_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -240,5 +326,11 @@
         private Label label5;
         private NumericUpDown numericUpDown1;
         private Button button1;
+        private DataGridView dataGridView2;
+        private Label label4;
+        private DateTimePicker dateTimePicker1;
+        private DateTimePicker dateTimePicker2;
+        private Label label6;
+        private Button button2;
     }
 }

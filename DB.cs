@@ -202,6 +202,40 @@ namespace WinFormsApp1
             }
             return dataTable;
         }
+        public DataTable GetDataTableParam(string query, Dictionary<string, object> parameters)
+        {
+            DataTable dataTable = new DataTable();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                {
+                    using (SqlCommand cmd = new SqlCommand(query, connection))
+                    {
+                        // Add parameters to the command
+                        if (parameters != null)
+                        {
+                            foreach (var parameter in parameters)
+                            {
+                                cmd.Parameters.AddWithValue(parameter.Key, parameter.Value);
+                            }
+                        }
+
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                        {
+                            connection.Open();
+                            // Fill the DataTable with the query result
+                            adapter.Fill(dataTable);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            return dataTable;
+        }
+
 
         public bool DoesProductExist(string productName)
         {
