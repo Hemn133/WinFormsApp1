@@ -133,6 +133,7 @@
             AmountPaid.Size = new Size(346, 33);
             AmountPaid.TabIndex = 58;
             AmountPaid.TextChanged += AmountPaid_TextChanged;
+            AmountPaid.KeyPress += AmountPaid_KeyPress;
             // 
             // label1
             // 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
@@ -31,7 +31,7 @@ namespace WinFormsApp1
 
             if (string.IsNullOrWhiteSpace(role) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Please enter both Role and Password.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("تکایە ناو و وشەی نهێنی داخڵ بکە.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -41,7 +41,7 @@ namespace WinFormsApp1
 
                 if (!string.IsNullOrEmpty(userRole))
                 {
-                    MessageBox.Show("Login Successful!");
+                    
 
                     AdminDashboard adminDashboard = new AdminDashboard(userRole);
                     adminDashboard.Show();
@@ -50,7 +50,7 @@ namespace WinFormsApp1
                 }
                 else
                 {
-                    MessageBox.Show("Invalid login details", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("ناو یان وشەی نهێنی هەڵەیە", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Password.Clear();
                     Password.Focus();
                 }

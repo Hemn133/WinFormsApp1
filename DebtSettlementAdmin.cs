@@ -95,13 +95,13 @@ namespace WinFormsApp1
             // Validate input
             if (string.IsNullOrEmpty(customerId) || string.IsNullOrEmpty(amountText))
             {
-                MessageBox.Show("Please enter all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تکایە زانیاری تەواو داخڵ بکە.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (!decimal.TryParse(amountText, out decimal amountPaid) || amountPaid <= 0)
             {
-                MessageBox.Show("Please enter a valid settlement amount.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تکایە بڕی دروست داخڵ بکە.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -194,7 +194,7 @@ namespace WinFormsApp1
         {
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a row to update.", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("دیاری بکە بۆ گۆڕانکاری.", "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -209,13 +209,13 @@ namespace WinFormsApp1
             // Validate input
             if (string.IsNullOrEmpty(customerName) || string.IsNullOrEmpty(amountPaidText))
             {
-                MessageBox.Show("Please fill all fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تکایە زانیاری تەواو داخڵ بکە.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (!decimal.TryParse(amountPaidText, out decimal newAmountPaid) || newAmountPaid < 0)
             {
-                MessageBox.Show("Invalid amount entered. Please enter a valid positive number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("بڕی خاخڵ کراو نادروستە. تکایە ژمارەیەکی دروست داخڵ بکە.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace WinFormsApp1
                 RefreshDataGridView();
 
                 // Show success message
-                MessageBox.Show("Debt settlement updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("گۆڕانکاری ئەنجامدرا!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -265,7 +265,7 @@ namespace WinFormsApp1
             // Get the selected row
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a row to delete.", "Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("تکایە دیاری بکە بۆ سڕینەوە.", "Delete Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -294,7 +294,7 @@ namespace WinFormsApp1
             string customerId = settlementData.Rows[0]["CustomerID"].ToString();
 
             // Step 2: Ask for confirmation before deleting
-            DialogResult result = MessageBox.Show("Are you sure you want to delete this settlement?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show("دڵنیای دەتەوێ سڕینەوە ئەنجام بدەیت?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result == DialogResult.Yes)
             {
                 // Step 3: Delete the settlement from the database
@@ -313,12 +313,12 @@ namespace WinFormsApp1
                 // Refresh the DataGridView
                 RefreshDataGridView();
 
-                MessageBox.Show("Debt settlement deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("وەرگرتنەوەی قەرز سەرکەوتوبوو!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
 
             AmountPaid.Clear();
-       
+
 
 
 
@@ -400,6 +400,16 @@ namespace WinFormsApp1
         private void AmountPaid_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void AmountPaid_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control keys (like Backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Suppress the key if it's not a digit or control key
+                e.Handled = true;
+            }
         }
     }
 }

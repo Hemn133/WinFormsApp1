@@ -45,12 +45,13 @@ namespace WinFormsApp1
 
             // Bind the DataTable to the DataGridView
             dataGridView1.DataSource = dataTable; // Replace 'dataGridView1' with the name of your DataGridView
-         
+
             dataGridView1.Columns["ProductID"].Visible = false;
             dataGridView1.Columns["QuantityAvailable"].HeaderText = "دانە";
             dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
             dataGridView1.Columns["PurchasePrice"].HeaderText = "نرخی کڕین";
             dataGridView1.Columns["SellingPrice"].HeaderText = "نرخی فرۆشتن";
+            dataGridView1.Columns["Discount"].HeaderText = "داشکاندن";
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
             dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Color.Teal; // Set background color to teal
             dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Color.White; // Set text color to white for better contrast
@@ -219,5 +220,34 @@ namespace WinFormsApp1
             RefreshDataGridView();
         }
 
+        private void PurchasePrice_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control keys (like Backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Suppress the key if it's not a digit or control key
+                e.Handled = true;
+            }
+        }
+
+        private void Quantity_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control keys (like Backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Suppress the key if it's not a digit or control key
+                e.Handled = true;
+            }
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control keys (like Backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Suppress the key if it's not a digit or control key
+                e.Handled = true;
+            }
+        }
     }
 }

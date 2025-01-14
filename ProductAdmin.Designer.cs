@@ -41,6 +41,8 @@
             label4 = new Label();
             label3 = new Label();
             Quantity = new TextBox();
+            label1 = new Label();
+            textBox1 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -59,7 +61,7 @@
             // ProductName
             // 
             ProductName.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ProductName.Location = new Point(1355, 146);
+            ProductName.Location = new Point(1354, 151);
             ProductName.Multiline = true;
             ProductName.Name = "ProductName";
             ProductName.Size = new Size(250, 33);
@@ -68,7 +70,7 @@
             // SalePrice
             // 
             SalePrice.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            SalePrice.Location = new Point(873, 146);
+            SalePrice.Location = new Point(872, 151);
             SalePrice.Multiline = true;
             SalePrice.Name = "SalePrice";
             SalePrice.Size = new Size(235, 33);
@@ -77,17 +79,18 @@
             // PurchasePrice
             // 
             PurchasePrice.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            PurchasePrice.Location = new Point(1114, 146);
+            PurchasePrice.Location = new Point(1113, 151);
             PurchasePrice.Multiline = true;
             PurchasePrice.Name = "PurchasePrice";
             PurchasePrice.Size = new Size(235, 33);
             PurchasePrice.TabIndex = 31;
+            PurchasePrice.KeyPress += PurchasePrice_KeyPress;
             // 
             // button10
             // 
             button10.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button10.ForeColor = Color.Teal;
-            button10.Location = new Point(1269, 190);
+            button10.Location = new Point(1268, 190);
             button10.Name = "button10";
             button10.Size = new Size(336, 35);
             button10.TabIndex = 30;
@@ -111,7 +114,7 @@
             // 
             button11.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button11.ForeColor = Color.Red;
-            button11.Location = new Point(632, 190);
+            button11.Location = new Point(631, 190);
             button11.Name = "button11";
             button11.Size = new Size(279, 35);
             button11.TabIndex = 28;
@@ -140,7 +143,7 @@
             label6.AutoSize = true;
             label6.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label6.ForeColor = Color.Teal;
-            label6.Location = new Point(810, 104);
+            label6.Location = new Point(809, 109);
             label6.Name = "label6";
             label6.Size = new Size(58, 39);
             label6.TabIndex = 26;
@@ -151,7 +154,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label5.ForeColor = Color.Teal;
-            label5.Location = new Point(1220, 104);
+            label5.Location = new Point(1219, 109);
             label5.Name = "label5";
             label5.Size = new Size(129, 39);
             label5.TabIndex = 25;
@@ -162,7 +165,7 @@
             label4.AutoSize = true;
             label4.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label4.ForeColor = Color.Teal;
-            label4.Location = new Point(941, 104);
+            label4.Location = new Point(940, 109);
             label4.Name = "label4";
             label4.Size = new Size(167, 39);
             label4.TabIndex = 24;
@@ -173,7 +176,7 @@
             label3.AutoSize = true;
             label3.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.Teal;
-            label3.Location = new Point(1493, 104);
+            label3.Location = new Point(1492, 109);
             label3.Name = "label3";
             label3.Size = new Size(112, 39);
             label3.TabIndex = 23;
@@ -182,16 +185,40 @@
             // Quantity
             // 
             Quantity.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Quantity.Location = new Point(632, 146);
+            Quantity.Location = new Point(631, 151);
             Quantity.Multiline = true;
             Quantity.Name = "Quantity";
             Quantity.Size = new Size(235, 33);
             Quantity.TabIndex = 22;
+            Quantity.KeyPress += Quantity_KeyPress;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.ForeColor = Color.Teal;
+            label1.Location = new Point(506, 109);
+            label1.Name = "label1";
+            label1.Size = new Size(119, 39);
+            label1.TabIndex = 36;
+            label1.Text = "داشکاندن";
+            // 
+            // textBox1
+            // 
+            textBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            textBox1.Location = new Point(390, 151);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(235, 33);
+            textBox1.TabIndex = 35;
+            textBox1.KeyPress += textBox1_KeyPress;
             // 
             // ProductAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(label1);
+            Controls.Add(textBox1);
             Controls.Add(label7);
             Controls.Add(ProductName);
             Controls.Add(SalePrice);
@@ -228,5 +255,7 @@
         private Label label4;
         private Label label3;
         private TextBox Quantity;
+        private Label label1;
+        private TextBox textBox1;
     }
 }

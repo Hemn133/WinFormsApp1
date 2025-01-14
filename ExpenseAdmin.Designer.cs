@@ -63,6 +63,7 @@
             ExpenseAmount.Name = "ExpenseAmount";
             ExpenseAmount.Size = new Size(250, 33);
             ExpenseAmount.TabIndex = 55;
+            ExpenseAmount.KeyPress += ExpenseAmount_KeyPress;
             // 
             // Description
             // 

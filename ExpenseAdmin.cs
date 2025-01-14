@@ -150,7 +150,7 @@ namespace WinFormsApp1
                     // Refresh the DataGridView after deletion
                     RefreshDataGridView();
 
-                    MessageBox.Show("The expense record has been successfully deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("خەرجی سڕایەوە.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -159,7 +159,7 @@ namespace WinFormsApp1
             }
             else
             {
-                MessageBox.Show("Please select a row to delete.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("تکایە خەرجی دیاری بکە بۆ سڕینەوە.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
         }
@@ -176,7 +176,7 @@ namespace WinFormsApp1
             string expenseamount = ExpenseAmount.Text.Trim();
             string description = Description.Text.Trim();
             string date = ExpenseDatePicker.Text.Trim();
-            
+
 
             // Validate input
             if (
@@ -190,7 +190,7 @@ namespace WinFormsApp1
             // Ensure a row is selected to get the ExpenseID
             if (dataGridView1.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a record to update.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("تکایە خەرجی دیاری بکە بۆ گۆڕانکاری.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -199,7 +199,7 @@ namespace WinFormsApp1
 
             DB db = new DB();
 
-            string query =  "UPDATE Expenses SET ExpenseDate = @ExpenseDate, Description = @Description, Amount = @Amount WHERE ExpenseID = @ExpenseID";
+            string query = "UPDATE Expenses SET ExpenseDate = @ExpenseDate, Description = @Description, Amount = @Amount WHERE ExpenseID = @ExpenseID";
 
             // Prepare parameters
             var parameters = new Dictionary<string, object>
@@ -219,6 +219,16 @@ namespace WinFormsApp1
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ExpenseAmount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control keys (like Backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Suppress the key if it's not a digit or control key
+                e.Handled = true;
             }
         }
     }

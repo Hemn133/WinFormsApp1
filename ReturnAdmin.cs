@@ -62,7 +62,7 @@ namespace WinFormsApp1
             }
             else
             {
-                MessageBox.Show("Please enter a valid Sale ID.");
+                MessageBox.Show("ئەم کۆدە بوونی نییە.");
             }
         }
 
@@ -80,7 +80,7 @@ namespace WinFormsApp1
 
             if (productIdObj == null)
             {
-                MessageBox.Show("Product not found.");
+                MessageBox.Show("کاڵا نەدۆزرایەوە.");
                 return;
             }
 
@@ -101,7 +101,7 @@ namespace WinFormsApp1
 
             db.ExecuteWithParameters(updateQuery, updateParameters);
 
-            MessageBox.Show("Product returned successfully.");
+            MessageBox.Show("گەڕانەوەی کاڵا سەرکەوتوبوو");
 
             // Reload the updated sale details
             LoadSaleDetails(saleId);
@@ -125,7 +125,7 @@ namespace WinFormsApp1
                 // Mark Sale as fully returned
                 string markReturnedQuery = "UPDATE Sales SET IsReturned = 1 WHERE SaleID = @SaleID";
                 db.ExecuteWithParameters(markReturnedQuery, checkParameters);
-                MessageBox.Show("Sale fully returned.");
+                MessageBox.Show("گەڕانەوەی پسوڵە سەرکەوتوبوو.");
             }
         }
 
@@ -162,7 +162,7 @@ namespace WinFormsApp1
             }
             else
             {
-                MessageBox.Show("No sale found with this ID.");
+                MessageBox.Show("هێچ پسوڵەیەک نەدۆزرایەوە.");
             }
         }
 
@@ -181,14 +181,14 @@ namespace WinFormsApp1
             // Validate product selection
             if (string.IsNullOrEmpty(selectedProduct))
             {
-                MessageBox.Show("Please select a product.");
+                MessageBox.Show("تکایە کاڵا دیاری بکە.");
                 return;
             }
 
             // Validate quantity
             if (returnQuantity <= 0)
             {
-                MessageBox.Show("Please specify a valid quantity greater than 0.");
+                MessageBox.Show("تکایە ژمارەیەکی دروست دیاری بکە گەورەتر لە 0.");
                 return;
             }
 
@@ -205,7 +205,7 @@ namespace WinFormsApp1
 
             if (returnQuantity > availableQuantity)
             {
-                MessageBox.Show("Return quantity exceeds the available quantity.");
+                MessageBox.Show("ژمارەی کاڵای گەڕاوە زیاترە لە فرۆشراو.");
                 return;
             }
 
@@ -229,14 +229,14 @@ namespace WinFormsApp1
                 dataGridView2.Rows.Add(selectedProduct, returnQuantity);
             }
 
-            MessageBox.Show("Product added to the return list.");
+            MessageBox.Show("کاڵا زیاد کرا بۆ بەشی گەڕانەوە.");
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             if (dataGridView2.Rows.Count == 0)
             {
-                MessageBox.Show("No items in the return list.");
+                MessageBox.Show("هیچ کاڵایەک نییە لە لیستی گەڕانەوە.");
                 return;
             }
 
@@ -247,14 +247,14 @@ namespace WinFormsApp1
                 // Fetch SaleID from the TextBox instead of DataGridView1
                 if (string.IsNullOrWhiteSpace(ExpenseAmount.Text))
                 {
-                    MessageBox.Show("Sale ID cannot be empty.");
+                    MessageBox.Show("کۆدی پسوڵە نابێت بەتاڵبێت.");
                     return;
                 }
 
                 int saleID;
                 if (!int.TryParse(ExpenseAmount.Text, out saleID))
                 {
-                    MessageBox.Show("Invalid Sale ID. Please enter a valid number.");
+                    MessageBox.Show("کۆدی پسوڵە هەڵەیە.");
                     return;
                 }
 
@@ -286,7 +286,7 @@ namespace WinFormsApp1
                     db.ExecuteWithParameters(updateStockQuery, stockParams);
                 }
 
-                MessageBox.Show("The selected items have been returned successfully.");
+                MessageBox.Show("کاڵا دیاریکراوەکان بە سەرکەوتووی گەڕانەوە.");
                 dataGridView2.Rows.Clear(); // Clear the return list after processing
             }
             catch (Exception ex)
@@ -300,7 +300,7 @@ namespace WinFormsApp1
             // Get the SaleID from DataGridView1
             if (dataGridView1.Rows.Count == 0)
             {
-                MessageBox.Show("No sale to return.");
+                MessageBox.Show("هیچ پسوڵەیەک نییە بۆ گەڕاندنەوە.");
                 return;
             }
 
@@ -332,7 +332,7 @@ namespace WinFormsApp1
                     db.ExecuteWithParameters(updateStockQuery, stockParams);
                 }
 
-                MessageBox.Show("The entire sale has been returned successfully.");
+                MessageBox.Show("پسوڵە بە سەرکەوتووی گەڕایەوە.");
                 dataGridView1.Rows.Clear(); // Clear the DataGridView after processing
             }
             catch (Exception ex)
