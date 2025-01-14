@@ -52,6 +52,8 @@ namespace WinFormsApp1
         {
             style(dataGridView1);
             style(dataGridView2);
+
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -169,74 +171,44 @@ namespace WinFormsApp1
         private void addtolist_Click(object sender, EventArgs e)
         {
 
-            if (dataGridView2.Columns.Count == 0)
+            if (dataGridView2.Columns.Count == 0) // Only set up columns once
             {
+                dataGridView2.Columns.Clear();
+                dataGridView2.Columns.Add("ProductID", "Product ID");
                 dataGridView2.Columns.Add("ProductName", "Product Name");
-                dataGridView2.Columns.Add("Quantity", "Quantity");
-            }
-            // Get the selected product and quantity
-            string selectedProduct = ProductSelection.SelectedItem?.ToString();
-            int returnQuantity = (int)numericUpDown1.Value;
-
-            // Validate product selection
-            if (string.IsNullOrEmpty(selectedProduct))
-            {
-                MessageBox.Show("تکایە کاڵا دیاری بکە.");
-                return;
+                dataGridView2.Columns.Add("Quantity", "Return Quantity");
             }
 
-            // Validate quantity
-            if (returnQuantity <= 0)
+            // Assuming `dataGridView1` contains the sale details
+            if (dataGridView1.SelectedRows.Count > 0)
             {
-                MessageBox.Show("تکایە ژمارەیەکی دروست دیاری بکە گەورەتر لە 0.");
-                return;
-            }
-
-            // Get the available quantity of the selected product from DataGridView 1
-            int availableQuantity = 0;
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                if (row.Cells["ProductName"].Value.ToString() == selectedProduct)
+                foreach (DataGridViewRow row in dataGridView1.SelectedRows)
                 {
-                    availableQuantity = Convert.ToInt32(row.Cells["Quantity"].Value);
-                    break;
+                    var selectedProductID = row.Cells["ProductID"].Value;
+                    var selectedProductName = row.Cells["ProductName"].Value;
+                    var returnQuantity = numericUpDown1.Value; // Use the NumericUpDown value
+
+                    if (selectedProductID != null && selectedProductName != null)
+                    {
+                        dataGridView2.Rows.Add(selectedProductID, selectedProductName, returnQuantity);
+                    }
+                    else
+                    {
+                        MessageBox.Show("The selected row is missing required data.");
+                    }
                 }
             }
-
-            if (returnQuantity > availableQuantity)
+            else
             {
-                MessageBox.Show("ژمارەی کاڵای گەڕاوە زیاترە لە فرۆشراو.");
-                return;
+                MessageBox.Show("Please select a product to add to the return list.");
             }
-
-            // Check if the product already exists in DataGridView 2
-            bool productExists = false;
-            foreach (DataGridViewRow row in dataGridView2.Rows)
-            {
-                if (row.Cells["ProductName"].Value.ToString() == selectedProduct)
-                {
-                    // Update the quantity
-                    int existingQuantity = Convert.ToInt32(row.Cells["Quantity"].Value);
-                    row.Cells["Quantity"].Value = existingQuantity + returnQuantity;
-                    productExists = true;
-                    break;
-                }
-            }
-
-            // If the product does not exist, add it as a new row
-            if (!productExists)
-            {
-                dataGridView2.Rows.Add(selectedProduct, returnQuantity);
-            }
-
-            MessageBox.Show("کاڵا زیاد کرا بۆ بەشی گەڕانەوە.");
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             if (dataGridView2.Rows.Count == 0)
             {
-                MessageBox.Show("هیچ کاڵایەک نییە لە لیستی گەڕانەوە.");
+                MessageBox.Show("No items in the return list.");
                 return;
             }
 
@@ -244,49 +216,123 @@ namespace WinFormsApp1
 
             try
             {
-                // Fetch SaleID from the TextBox instead of DataGridView1
+                // Validate SaleID
                 if (string.IsNullOrWhiteSpace(ExpenseAmount.Text))
                 {
-                    MessageBox.Show("کۆدی پسوڵە نابێت بەتاڵبێت.");
+                    MessageBox.Show("Sale ID cannot be empty.");
                     return;
                 }
 
-                int saleID;
-                if (!int.TryParse(ExpenseAmount.Text, out saleID))
+                if (!int.TryParse(ExpenseAmount.Text, out int saleID))
                 {
-                    MessageBox.Show("کۆدی پسوڵە هەڵەیە.");
+                    MessageBox.Show("Invalid Sale ID. Please enter a valid number.");
                     return;
                 }
+
+                decimal totalRefundAmount = 0;
+
+                // Check if the sale is credit
+                string checkCreditQuery = "SELECT IsCredit, CustomerID FROM Sales WHERE SaleID = @SaleID";
+                var creditParams = new Dictionary<string, object> { { "@SaleID", saleID } };
+                var creditData = db.ExecuteReader(checkCreditQuery, creditParams);
+
+                if (!creditData.Read())
+                {
+                    MessageBox.Show("Sale ID not found.");
+                    return;
+                }
+
+                bool isCredit = Convert.ToBoolean(creditData["IsCredit"]);
+                int customerID = isCredit ? Convert.ToInt32(creditData["CustomerID"]) : 0;
 
                 foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
-                    string productName = row.Cells["ProductName"].Value.ToString();
+                    if (row.Cells["ProductID"]?.Value == null || row.Cells["Quantity"]?.Value == null)
+                    {
+                        MessageBox.Show("One or more rows in the return list are missing required information.");
+                        return;
+                    }
+
+                    int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
                     int returnQuantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+
+                    // Fetch selling price
+                    string querySellingPrice = "SELECT SellingPrice FROM Product WHERE ProductID = @ProductID";
+                    var priceParams = new Dictionary<string, object> { { "@ProductID", productID } };
+                    object sellingPriceObj = db.ExecuteScalar(querySellingPrice, priceParams);
+
+                    if (sellingPriceObj == null)
+                    {
+                        MessageBox.Show("Selling price not found for the product.");
+                        return;
+                    }
+
+                    decimal sellingPrice = Convert.ToDecimal(sellingPriceObj);
+                    decimal refundAmount = returnQuantity * sellingPrice;
+                    totalRefundAmount += refundAmount;
 
                     // Update the SaleDetails table
                     string updateSaleDetailsQuery = @"
-                UPDATE SalesDetails 
-                SET Quantity = Quantity - @ReturnQuantity 
-                WHERE SaleID = @SaleID AND ProductName = @ProductName";
+            UPDATE SalesDetails
+            SET ReturnedQuantity = ReturnedQuantity + @ReturnQuantity
+            WHERE SaleID = @SaleID AND ProductID = @ProductID";
+
                     var saleDetailsParams = new Dictionary<string, object>
-            {
-                { "@ReturnQuantity", returnQuantity },
-                { "@SaleID", saleID },
-                { "@ProductName", productName }
-            };
+        {
+            { "@ReturnQuantity", returnQuantity },
+            { "@SaleID", saleID },
+            { "@ProductID", productID }
+        };
+
                     db.ExecuteWithParameters(updateSaleDetailsQuery, saleDetailsParams);
 
                     // Update the Product table to increase stock
-                    string updateStockQuery = "UPDATE Product SET QuantityAvailable = QuantityAvailable + @ReturnQuantity WHERE ProductName = @ProductName";
+                    string updateStockQuery = @"
+            UPDATE Product 
+            SET QuantityAvailable = QuantityAvailable + @ReturnQuantity 
+            WHERE ProductID = @ProductID";
+
                     var stockParams = new Dictionary<string, object>
-            {
-                { "@ReturnQuantity", returnQuantity },
-                { "@ProductName", productName }
-            };
+        {
+            { "@ReturnQuantity", returnQuantity },
+            { "@ProductID", productID }
+        };
+
                     db.ExecuteWithParameters(updateStockQuery, stockParams);
                 }
 
-                MessageBox.Show("کاڵا دیاریکراوەکان بە سەرکەوتووی گەڕانەوە.");
+                // Update the Sales table for partial returns
+                string updateSalesQuery = @"
+        UPDATE Sales 
+        SET TotalAmount = TotalAmount - @ReducedAmount
+        WHERE SaleID = @SaleID";
+
+                var salesParams = new Dictionary<string, object>
+    {
+        { "@ReducedAmount", totalRefundAmount },
+        { "@SaleID", saleID }
+    };
+
+                db.ExecuteWithParameters(updateSalesQuery, salesParams);
+
+                // Update the Customer table for credit sales
+                if (isCredit)
+                {
+                    string updateCustomerDebtQuery = @"
+            UPDATE Customer
+            SET TotalDebt = TotalDebt - @ReducedAmount
+            WHERE CustomerID = @CustomerID";
+
+                    var customerDebtParams = new Dictionary<string, object>
+        {
+            { "@ReducedAmount", totalRefundAmount },
+            { "@CustomerID", customerID }
+        };
+
+                    db.ExecuteWithParameters(updateCustomerDebtQuery, customerDebtParams);
+                }
+
+                MessageBox.Show("The selected items have been returned successfully.");
                 dataGridView2.Rows.Clear(); // Clear the return list after processing
             }
             catch (Exception ex)
@@ -338,6 +384,16 @@ namespace WinFormsApp1
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred while returning the sale: {ex.Message}");
+            }
+        }
+
+        private void ExpenseAmount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control keys (like Backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Suppress the key if it's not a digit or control key
+                e.Handled = true;
             }
         }
     }

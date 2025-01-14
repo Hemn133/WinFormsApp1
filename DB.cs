@@ -245,6 +245,31 @@ namespace WinFormsApp1
             return dataTable;
         }
 
+        public SqlDataReader ExecuteReader(string query, Dictionary<string, object> parameters)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            SqlCommand command = new SqlCommand(query, connection);
+
+            // Add parameters to the command
+            if (parameters != null)
+            {
+                foreach (var param in parameters)
+                {
+                    command.Parameters.AddWithValue(param.Key, param.Value);
+                }
+            }
+
+            try
+            {
+                connection.Open();
+                return command.ExecuteReader(CommandBehavior.CloseConnection); // Return a reader and ensure connection closes when done
+            }
+            catch (Exception ex)
+            {
+                connection.Close(); // Close connection in case of failure
+                throw new Exception($"An error occurred while executing the query: {ex.Message}", ex);
+            }
+        }
 
         public bool DoesProductExist(string productName)
         {
