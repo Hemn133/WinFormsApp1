@@ -247,28 +247,19 @@ namespace WinFormsApp1
 
         public SqlDataReader ExecuteReader(string query, Dictionary<string, object> parameters)
         {
-            SqlConnection connection = new SqlConnection(ConnectionString);
-            SqlCommand command = new SqlCommand(query, connection);
+            SqlConnection conn = new SqlConnection(ConnectionString); // Use your connection string
+            conn.Open();
 
-            // Add parameters to the command
-            if (parameters != null)
+            SqlCommand cmd = new SqlCommand(query, conn);
+
+            // Add parameters to the query
+            foreach (var param in parameters)
             {
-                foreach (var param in parameters)
-                {
-                    command.Parameters.AddWithValue(param.Key, param.Value);
-                }
+                cmd.Parameters.AddWithValue(param.Key, param.Value);
             }
 
-            try
-            {
-                connection.Open();
-                return command.ExecuteReader(CommandBehavior.CloseConnection); // Return a reader and ensure connection closes when done
-            }
-            catch (Exception ex)
-            {
-                connection.Close(); // Close connection in case of failure
-                throw new Exception($"An error occurred while executing the query: {ex.Message}", ex);
-            }
+            // Return the SqlDataReader
+            return cmd.ExecuteReader(CommandBehavior.CloseConnection); // Auto-close connection when the reader is closed
         }
 
         public bool DoesProductExist(string productName)
@@ -289,6 +280,25 @@ namespace WinFormsApp1
             {
                 Console.WriteLine("Error: " + ex.Message);
                 return false;
+            }
+        }
+
+        public int ExecuteNonQuery(string query, Dictionary<string, object> parameters)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    // Add parameters to the command
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.AddWithValue(param.Key, param.Value);
+                    }
+
+                    // Execute the command and return the number of affected rows
+                    return cmd.ExecuteNonQuery();
+                }
             }
         }
 
