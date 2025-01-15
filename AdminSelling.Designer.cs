@@ -321,7 +321,6 @@
         }
 
         #endregion
-
         private Label label7;
         private ComboBox ProductSelection;
         private Button addtolist;

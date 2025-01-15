@@ -206,7 +206,7 @@
         }
 
         #endregion
-        private Panel panel1;
+        public Panel panel1;
         private Button button1;
         private Button button2;
         private Button button3;

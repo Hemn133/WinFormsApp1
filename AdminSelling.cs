@@ -15,15 +15,18 @@ namespace WinFormsApp1
     public partial class AdminSelling : UserControl
     {
         DB db = new DB();
-        public AdminSelling()
+        private string _userRole;
+        public AdminSelling(string userRole)
         {
             InitializeComponent();
+            _userRole = userRole;
         }
 
         public static int currentUserID = 1; // Replace this with the actual logic for retrieving the logged-in user's ID
 
         private void UpdateTotalAmount()
         {
+            
             decimal total = 0;
 
             foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -61,8 +64,6 @@ namespace WinFormsApp1
                         adapter.Fill(salesData);
 
                         // Add Button columns to the DataGridView if not already added
-                        if (!dataGridView2.Columns.Contains("ViewDetails"))
-                        {
                             DataGridViewButtonColumn btnViewDetails = new DataGridViewButtonColumn
                             {
                                 Name = "ViewDetails",
@@ -71,9 +72,14 @@ namespace WinFormsApp1
                                 UseColumnTextForButtonValue = true
                             };
                             dataGridView2.Columns.Add(btnViewDetails);
-                        }
-                        if (!dataGridView2.Columns.Contains("Print"))
+                        DataGridViewButtonColumn btnReturn = new DataGridViewButtonColumn
                         {
+                            Name = "Return",
+                            HeaderText = "گەڕانەوە",
+                            Text = "گەڕانەوە",
+                            UseColumnTextForButtonValue = true
+                        };
+                        dataGridView2.Columns.Add(btnReturn);
                             DataGridViewButtonColumn btnPrint = new DataGridViewButtonColumn
                             {
                                 Name = "Print",
@@ -82,7 +88,6 @@ namespace WinFormsApp1
                                 UseColumnTextForButtonValue = true
                             };
                             dataGridView2.Columns.Add(btnPrint);
-                        }
 
                         // Bind data to DataGridView
                         dataGridView2.DataSource = salesData;
@@ -128,6 +133,7 @@ namespace WinFormsApp1
                 dataGridView2.DataSource = salesData;
 
                 // Set column headers
+                i
                 if (dataGridView2.Columns.Contains("SaleDate"))
                 {
                     dataGridView2.Columns["SaleDate"].HeaderText = "بەرواری فرۆشتن";
@@ -510,6 +516,22 @@ namespace WinFormsApp1
                     MessageBox.Show("Error opening sale details: " + ex.Message);
                 }
             }
+            if (e.RowIndex >= 0 && dataGridView2.Columns[e.ColumnIndex].Name == "Return")
+            {
+                try
+                {
+                    // Get the SaleID of the selected row
+                    string saleID = dataGridView2.Rows[e.RowIndex].Cells["SaleID"].Value.ToString();
+
+                    // Open the popup form
+                    ReturnAdmin returnAdmin = new ReturnAdmin(saleID);
+                    LoadUserControl(returnAdmin);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening sale details: " + ex.Message);
+                }
+            }
             if (e.RowIndex >= 0 && dataGridView2.Columns[e.ColumnIndex].Name == "Print")
             {
                 try
@@ -522,7 +544,18 @@ namespace WinFormsApp1
                 }
             }
         }
+        private void LoadUserControl(UserControl newControl)
+        {
+            AdminDashboard dash = this.ParentForm as AdminDashboard;
+            // Clear any existing controls in the panel
+            dash.panel1.Controls.Clear();
 
+            // Set the new UserControl to fill the panel
+            newControl.Dock = DockStyle.Fill;
+
+            // Add the UserControl to the panel
+            dash.panel1.Controls.Add(newControl);
+        }
         private void button2_Click(object sender, EventArgs e)
         {
             try
@@ -536,7 +569,7 @@ namespace WinFormsApp1
             SELECT 
                 s.SaleID, 
                 s.SaleDate, 
-                u.Username AS UserAccount, 
+                u.Username AS [فرۆشراوە لە لایەن], 
                 s.TotalAmount 
             FROM Sales s
             INNER JOIN UserAccount u ON s.UserAccountID = u.UserAccountID

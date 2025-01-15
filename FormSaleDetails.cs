@@ -68,8 +68,8 @@ namespace WinFormsApp1
                         SD.Subtotal AS [نرخ], 
                         U.Username AS [فرۆشراوە لە لایەن],  
                         CASE 
-                            WHEN S.IsCredit = 1 THEN 'Debt' 
-                            ELSE 'Cash' 
+                            WHEN S.IsCredit = 1 THEN N'قەرز' 
+                            ELSE N'کاش' 
                         END AS [جۆری پارەدان],
                         CASE 
                             WHEN C.CustomerName IS NOT NULL THEN C.CustomerName
@@ -99,11 +99,6 @@ namespace WinFormsApp1
                 // Show error message if something goes wrong
                 MessageBox.Show("Error loading sale details: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void dataGridViewSaleDetails_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            // Handle cell click events if needed
         }
     }
 }

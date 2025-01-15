@@ -44,7 +44,6 @@
             dataGridViewSaleDetails.ReadOnly = true;
             dataGridViewSaleDetails.Size = new Size(776, 426);
             dataGridViewSaleDetails.TabIndex = 0;
-            dataGridViewSaleDetails.CellContentClick += dataGridViewSaleDetails_CellContentClick;
             // 
             // FormSaleDetails
             // 

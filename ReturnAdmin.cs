@@ -8,14 +8,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WinFormsApp1
 {
     public partial class ReturnAdmin : UserControl
     {
-        public ReturnAdmin()
+        private string _id;
+        public ReturnAdmin(string id = "")
         {
             InitializeComponent();
+            _id = id;
         }
         private void style(DataGridView datagridview)
         {
@@ -53,8 +56,13 @@ namespace WinFormsApp1
         {
             style(dataGridView1);
             style(dataGridView2);
+            ExpenseAmount.Text = _id;
 
-
+            if (!string.IsNullOrWhiteSpace(ExpenseAmount.Text))
+            {
+                // Trigger button1 click event
+                button2.PerformClick();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -167,6 +175,7 @@ namespace WinFormsApp1
             {
                 MessageBox.Show("هێچ پسوڵەیەک نەدۆزرایەوە.");
             }
+
         }
 
         private void addtolist_Click(object sender, EventArgs e)
@@ -440,6 +449,22 @@ TotalAmount=0
             {
                 // Suppress the key if it's not a digit or control key
                 e.Handled = true;
+            }
+        }
+
+        private void ProductSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedProduct = ProductSelection.SelectedItem.ToString();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["ProductName"].Value != null && row.Cells["ProductName"].Value.ToString() == selectedProduct)
+                {
+                    int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+                    numericUpDown1.Maximum = quantity > 0 ? quantity : 1; // Prevents setting 0 as the max
+                    numericUpDown1.Value = 1; // Reset value to 1 when selection changes
+                    break;
+                }
             }
         }
     }

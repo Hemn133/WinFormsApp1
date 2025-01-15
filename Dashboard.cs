@@ -14,7 +14,7 @@ namespace WinFormsApp1
 {
     public partial class AdminDashboard : Form
     {
-        private string _userRole;
+        public string _userRole;
 
         public AdminDashboard(string userRole)
         {
@@ -37,7 +37,7 @@ namespace WinFormsApp1
         private void Dashboard_Load(object sender, EventArgs e)
         {
             AdjustUIForRole();
-            AdminSelling categoryAControl = new AdminSelling();
+            AdminSelling categoryAControl = new AdminSelling(_userRole);
             LoadUserControl(categoryAControl);
         }
         private void AdjustUIForRole()
@@ -96,7 +96,7 @@ namespace WinFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ProductAdmin categoryAControl = new ProductAdmin();
+            ProductAdmin categoryAControl = new ProductAdmin(_userRole);
 
             // Load it into the panel
             LoadUserControl(categoryAControl);
@@ -104,7 +104,7 @@ namespace WinFormsApp1
 
         private void button2_Click(object sender, EventArgs e)
         {
-            AdminSelling adminSelling = new AdminSelling();
+            AdminSelling adminSelling = new AdminSelling(_userRole);
             LoadUserControl(adminSelling);
         }
 

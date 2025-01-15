@@ -144,6 +144,7 @@
             ProductSelection.Name = "ProductSelection";
             ProductSelection.Size = new Size(235, 33);
             ProductSelection.TabIndex = 59;
+            ProductSelection.SelectedIndexChanged += ProductSelection_SelectedIndexChanged;
             // 
             // label1
             // 

@@ -12,12 +12,15 @@ namespace WinFormsApp1
 {
     public partial class ProductAdmin : UserControl
     {
-        public ProductAdmin()
+        private string _userRole;
+        public ProductAdmin(string userRole)
         {
             InitializeComponent();
+            _userRole = userRole;
         }
         private void RefreshDataGridView()
         {
+            
             DB db = new DB();
             string query = "SELECT * FROM Product"; // Replace with your actual query
             DataTable dataTable = db.GetDataTable(query);
@@ -45,11 +48,21 @@ namespace WinFormsApp1
 
             // Bind the DataTable to the DataGridView
             dataGridView1.DataSource = dataTable; // Replace 'dataGridView1' with the name of your DataGridView
-
+            
             dataGridView1.Columns["ProductID"].Visible = false;
             dataGridView1.Columns["QuantityAvailable"].HeaderText = "دانە";
             dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
-            dataGridView1.Columns["PurchasePrice"].HeaderText = "نرخی کڕین";
+            if (_userRole == "Admin")
+            {
+                // Admin has full access
+                dataGridView1.Columns["PurchasePrice"].HeaderText = "نرخی کڕین";
+            }
+            else if (_userRole == "Employee")
+            {
+                // Employee has limited access
+                dataGridView1.Columns["PurchasePrice"].Visible = false;
+            }
+            
             dataGridView1.Columns["SellingPrice"].HeaderText = "نرخی فرۆشتن";
             dataGridView1.Columns["Discount"].HeaderText = "داشکاندن";
             dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("NRT Bold", 12, FontStyle.Regular); // Adjust size if needed
