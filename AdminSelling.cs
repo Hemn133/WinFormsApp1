@@ -133,7 +133,7 @@ namespace WinFormsApp1
                 dataGridView2.DataSource = salesData;
 
                 // Set column headers
-                i
+                
                 if (dataGridView2.Columns.Contains("SaleDate"))
                 {
                     dataGridView2.Columns["SaleDate"].HeaderText = "بەرواری فرۆشتن";

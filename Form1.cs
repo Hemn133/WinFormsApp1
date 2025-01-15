@@ -41,7 +41,7 @@ namespace WinFormsApp1
 
                 if (!string.IsNullOrEmpty(userRole))
                 {
-                    
+
 
                     AdminDashboard adminDashboard = new AdminDashboard(userRole);
                     adminDashboard.Show();
@@ -90,6 +90,16 @@ namespace WinFormsApp1
             }
 
             return null; // Return null if authentication fails
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked) {
+            
+            Password.UseSystemPasswordChar = true;
+            } else {Password.UseSystemPasswordChar= false; }
+
+
         }
     }
 }

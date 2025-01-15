@@ -74,7 +74,11 @@ namespace WinFormsApp1
                         CASE 
                             WHEN C.CustomerName IS NOT NULL THEN C.CustomerName
                             ELSE '-'
-                        END AS [ناوی خاوەن قەرز]
+                        END AS [ناوی خاوەن قەرز],
+CASE 
+            WHEN S.IsReturned = 1 THEN N'بەڵێ' 
+            ELSE N'نەخێر' 
+        END AS [گەڕاوەتەوە]
                     FROM Sales S
                     INNER JOIN SalesDetails SD ON S.SaleID = SD.SaleID
                     INNER JOIN Product P ON SD.ProductID = P.ProductID

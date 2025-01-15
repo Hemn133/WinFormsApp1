@@ -130,6 +130,7 @@
             checkBox1.TabIndex = 7;
             checkBox1.Text = "بینینی وشەی نهێنی";
             checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // pictureBox1
             // 
