@@ -186,7 +186,7 @@ namespace WinFormsApp1
         }
         private void AdminSelling_Load(object sender, EventArgs e)
         {
-
+            
             // Add columns to the DataGridView if not already added
             if (dataGridView1.Columns.Count == 0)
             {
@@ -196,8 +196,20 @@ namespace WinFormsApp1
                 dataGridView1.Columns.Add("UnitPrice", "نرخی دانە");
                 dataGridView1.Columns.Add("TotalPrice", "کۆی گشتی");
             }
+
+            // Set all columns to ReadOnly first
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                column.ReadOnly = true;
+            }
+
+            // Make only the "Quantity" column editable
+            dataGridView1.Columns["Quantity"].ReadOnly = false;
+
             style(dataGridView1);
             style(dataGridView2);
+
+            
 
             // Set default values for DateTimePickers
             dateTimePicker1.Value = DateTime.Today; ; // Start date
@@ -247,6 +259,8 @@ namespace WinFormsApp1
 
         }
 
+
+
         private void ReverseColumnsOrder(DataGridView dataGridView)
         {
             int columnCount = dataGridView.Columns.Count;
@@ -257,7 +271,30 @@ namespace WinFormsApp1
             }
         }
 
+        private bool IsProductAlreadyAdded(string productId)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.Cells["ProductID"].Value != null && row.Cells["ProductID"].Value.ToString() == productId)
+                {
+                    return true; // Product already exists
+                }
+            }
+            return false; // Product does not exist
+        }
 
+        private void AddProductToGridView(string productId, string productName, int quantity, decimal unitPrice)
+        {
+            // Check if the product already exists
+            if (IsProductAlreadyAdded(productId))
+            {
+                MessageBox.Show("This product is already added to the list.", "Duplicate Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Add the product to the DataGridView
+            dataGridView1.Rows.Add(productId, productName, quantity, unitPrice, quantity * unitPrice);
+        }
 
         private void addtolist_Click(object sender, EventArgs e)
         {
@@ -274,13 +311,32 @@ namespace WinFormsApp1
                 // Retrieve the selected product's ID
                 int productID = (int)ProductSelection.SelectedValue;
 
-                // Fetch unit price from the database
+                // Check if the product is already in the DataGridView
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    if (row.Cells["ProductID"].Value != null && (int)row.Cells["ProductID"].Value == productID)
+                    {
+                        // If the product already exists, update its quantity and total price
+                        int currentQuantity = (int)row.Cells["Quantity"].Value;
+                        int additionalQuantity = (int)numericUpDown1.Value;
+                        decimal unitPrice = (decimal)row.Cells["UnitPrice"].Value;
 
+                        row.Cells["Quantity"].Value = currentQuantity + additionalQuantity;
+                        row.Cells["TotalPrice"].Value = (currentQuantity + additionalQuantity) * unitPrice;
+
+                        // Update the total amount
+                        UpdateTotalAmount();
+
+                        return; // Exit the method after updating the existing row
+                    }
+                }
+
+                // Fetch unit price from the database
                 string query = "SELECT SellingPrice FROM Product WHERE ProductID = @ProductID";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
-{
-    { "@ProductID", productID }
-};
+        {
+            { "@ProductID", productID }
+        };
 
                 object result = db.ExecuteScalar(query, parameters);
 
@@ -290,7 +346,7 @@ namespace WinFormsApp1
                     return;
                 }
 
-                decimal unitPrice = Convert.ToDecimal(result);
+                decimal unitPriceFromDb = Convert.ToDecimal(result);
 
                 // Retrieve the selected product's name
                 string productName = ProductSelection.Text;
@@ -299,10 +355,10 @@ namespace WinFormsApp1
                 int quantity = (int)numericUpDown1.Value;
 
                 // Calculate the total price
-                decimal totalPrice = unitPrice * quantity;
+                decimal totalPrice = unitPriceFromDb * quantity;
 
-                // Add the product details to the DataGridView
-                dataGridView1.Rows.Add(productID, productName, quantity, unitPrice, totalPrice);
+                // Add the product details to the DataGridView as a new row
+                dataGridView1.Rows.Add(productID, productName, quantity, unitPriceFromDb, totalPrice);
 
                 // Update the total amount
                 UpdateTotalAmount();
@@ -311,6 +367,8 @@ namespace WinFormsApp1
             {
                 MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+
         }
 
 
@@ -427,7 +485,7 @@ namespace WinFormsApp1
                     UpdateTotalAmount();
 
                     // Refresh DataGridView2 to reflect the latest Sales data
-                    RefreshDataGridView2();
+                    RefreshDataGridView2(dateTimePicker1.Value.Date, dateTimePicker2.Value.Date);
                 }
                 catch (Exception ex)
                 {
