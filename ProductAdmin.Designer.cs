@@ -42,7 +42,7 @@
             label3 = new Label();
             Quantity = new TextBox();
             label1 = new Label();
-            textBox1 = new TextBox();
+            Discount = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -204,22 +204,22 @@
             label1.TabIndex = 36;
             label1.Text = "داشکاندن";
             // 
-            // textBox1
+            // Discount
             // 
-            textBox1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            textBox1.Location = new Point(390, 151);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(235, 33);
-            textBox1.TabIndex = 35;
-            textBox1.KeyPress += textBox1_KeyPress;
+            Discount.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            Discount.Location = new Point(390, 151);
+            Discount.Multiline = true;
+            Discount.Name = "Discount";
+            Discount.Size = new Size(235, 33);
+            Discount.TabIndex = 35;
+            Discount.KeyPress += textBox1_KeyPress;
             // 
             // ProductAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(label1);
-            Controls.Add(textBox1);
+            Controls.Add(Discount);
             Controls.Add(label7);
             Controls.Add(ProductName);
             Controls.Add(SalePrice);
@@ -257,6 +257,6 @@
         private Label label3;
         private TextBox Quantity;
         private Label label1;
-        private TextBox textBox1;
+        private TextBox Discount;
     }
 }
