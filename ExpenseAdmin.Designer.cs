@@ -40,6 +40,10 @@
             Label33 = new Label();
             ExpenseDateTextBox = new TextBox();
             ExpenseDatePicker = new DateTimePicker();
+            button2 = new Button();
+            label6 = new Label();
+            dateTimePicker2 = new DateTimePicker();
+            dateTimePicker1 = new DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -163,7 +167,7 @@
             // ExpenseDateTextBox
             // 
             ExpenseDateTextBox.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ExpenseDateTextBox.Location = new Point(311, 65);
+            ExpenseDateTextBox.Location = new Point(81, 12);
             ExpenseDateTextBox.Name = "ExpenseDateTextBox";
             ExpenseDateTextBox.Size = new Size(316, 33);
             ExpenseDateTextBox.TabIndex = 59;
@@ -177,10 +181,58 @@
             ExpenseDatePicker.Size = new Size(316, 33);
             ExpenseDatePicker.TabIndex = 60;
             // 
+            // button2
+            // 
+            button2.Font = new Font("NRT Bold", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            button2.ForeColor = Color.Teal;
+            button2.Location = new Point(8, 201);
+            button2.Name = "button2";
+            button2.Size = new Size(90, 34);
+            button2.TabIndex = 64;
+            button2.Text = "گەڕان";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("NRT Bold", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label6.ForeColor = Color.Teal;
+            label6.Location = new Point(310, 203);
+            label6.Name = "label6";
+            label6.Size = new Size(31, 30);
+            label6.TabIndex = 63;
+            label6.Text = "بۆ";
+            // 
+            // dateTimePicker2
+            // 
+            dateTimePicker2.CustomFormat = "dd-MM-yyyy";
+            dateTimePicker2.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker2.Format = DateTimePickerFormat.Short;
+            dateTimePicker2.Location = new Point(104, 202);
+            dateTimePicker2.Name = "dateTimePicker2";
+            dateTimePicker2.Size = new Size(200, 33);
+            dateTimePicker2.TabIndex = 62;
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.CalendarFont = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker1.CustomFormat = "dd-MM-yyyy";
+            dateTimePicker1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dateTimePicker1.Format = DateTimePickerFormat.Short;
+            dateTimePicker1.Location = new Point(347, 202);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(200, 33);
+            dateTimePicker1.TabIndex = 61;
+            // 
             // ExpenseAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(button2);
+            Controls.Add(label6);
+            Controls.Add(dateTimePicker2);
+            Controls.Add(dateTimePicker1);
             Controls.Add(ExpenseDatePicker);
             Controls.Add(ExpenseDateTextBox);
             Controls.Add(Label33);
@@ -215,5 +267,9 @@
         private TextBox ExpenseDateTextBox;
         private Label Label33;
         private DateTimePicker ExpenseDatePicker;
+        private Button button2;
+        private Label label6;
+        private DateTimePicker dateTimePicker2;
+        private DateTimePicker dateTimePicker1;
     }
 }

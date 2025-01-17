@@ -107,7 +107,7 @@ namespace WinFormsApp1
 
         private void dataGridViewSaleDetails_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (dataGridViewSaleDetails.Columns[e.ColumnIndex].Name == "Subtotal" && e.Value != null)
+            if (dataGridViewSaleDetails.Columns[e.ColumnIndex].Name == "نرخ" && e.Value != null)
             {
                 if (decimal.TryParse(e.Value.ToString(), out decimal value))
                 {
@@ -117,5 +117,9 @@ namespace WinFormsApp1
                 }
             }
         }
+
+
+
+
     }
 }

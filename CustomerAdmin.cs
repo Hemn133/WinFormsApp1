@@ -12,9 +12,11 @@ namespace WinFormsApp1
 {
     public partial class CustomerAdmin : UserControl
     {
-        public CustomerAdmin()
+        private string _userrole;
+        public CustomerAdmin(string userrole)
         {
             InitializeComponent();
+            _userrole = userrole;
         }
 
         private void button10_Click(object sender, EventArgs e)
@@ -85,6 +87,23 @@ namespace WinFormsApp1
 
         private void CustomerAdmin_Load(object sender, EventArgs e)
         {
+            if(_userrole == "Employee")
+            {
+                CustomerName.Enabled = false;
+                Amount.Enabled = false;
+                button10.Enabled = false;
+                button11.Enabled = false;
+                button9.Enabled = false;
+                
+
+
+
+
+
+            }
+
+
+
             DB db = new DB(); // Create an instance of the DB class
             string query = "SELECT * FROM Customer"; // Replace with your actual query
 

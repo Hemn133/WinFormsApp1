@@ -82,7 +82,7 @@
             button1.Name = "button1";
             button1.Size = new Size(292, 33);
             button1.TabIndex = 54;
-            button1.Text = "سڕینەوە";
+            button1.Text = "گەڕانەوەی پسوڵە";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 

@@ -202,7 +202,9 @@ namespace WinFormsApp1
                 dataGridView1.Columns.Add("ProductName", "ناوی کاڵا");
                 dataGridView1.Columns.Add("Quantity", "دانە");
                 dataGridView1.Columns.Add("UnitPrice", "نرخی دانە");
+                
                 dataGridView1.Columns.Add("TotalPrice", "کۆی گشتی");
+
             }
 
             // Set all columns to ReadOnly first
@@ -339,22 +341,23 @@ namespace WinFormsApp1
                     }
                 }
 
-                // Fetch unit price from the database
-                string query = "SELECT SellingPrice FROM Product WHERE ProductID = @ProductID";
+                // Fetch selling price and discount from the database
+                string query = "SELECT SellingPrice, Discount FROM Product WHERE ProductID = @ProductID";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
-        {
-            { "@ProductID", productID }
-        };
+    {
+        { "@ProductID", productID }
+    };
 
-                object result = db.ExecuteScalar(query, parameters);
-
-                if (result == null || result == DBNull.Value)
+                DataTable productData = db.GetDataTable(query, parameters);
+                if (productData.Rows.Count == 0)
                 {
-                    MessageBox.Show("Failed to fetch the unit price for the selected product.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Failed to fetch product details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                decimal unitPriceFromDb = Convert.ToDecimal(result);
+                decimal sellingPrice = Convert.ToDecimal(productData.Rows[0]["SellingPrice"]);
+                decimal discount = Convert.ToDecimal(productData.Rows[0]["Discount"]);
+                decimal discountedPrice = sellingPrice - discount;
 
                 // Retrieve the selected product's name
                 string productName = ProductSelection.Text;
@@ -363,10 +366,10 @@ namespace WinFormsApp1
                 int quantity = (int)numericUpDown1.Value;
 
                 // Calculate the total price
-                decimal totalPrice = unitPriceFromDb * quantity;
+                decimal totalPrice = discountedPrice * quantity;
 
                 // Add the product details to the DataGridView as a new row
-                dataGridView1.Rows.Add(productID, productName, quantity, unitPriceFromDb, totalPrice);
+                dataGridView1.Rows.Add(productID, productName, quantity, discountedPrice, totalPrice);
 
                 // Update the total amount
                 UpdateTotalAmount();

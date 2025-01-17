@@ -12,13 +12,26 @@ namespace WinFormsApp1
 {
     public partial class ExpenseAdmin : UserControl
     {
-        public ExpenseAdmin()
+
+        private string _userRole;
+        public ExpenseAdmin(string userRole)
         {
             InitializeComponent();
+            _userRole = userRole;
         }
 
         private void ExpenseAdmin_Load(object sender, EventArgs e)
         {
+
+            if (_userRole == "Employee")
+            {
+
+                ExpenseDatePicker.Enabled = false;
+                button9.Enabled = false;
+                button11.Enabled = false;
+
+
+            }
 
             ExpenseDateTextBox.Visible = false;
             DB db = new DB(); // Create an instance of the DB class
@@ -245,6 +258,48 @@ namespace WinFormsApp1
             }
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Retrieve the selected dates from the DatePickers
+            DateTime startDate = dateTimePicker1.Value.Date;
+            DateTime endDate = dateTimePicker2.Value.Date;
 
+            // Validate that the start date is before the end date
+            if (startDate > endDate)
+            {
+                MessageBox.Show("Start date cannot be after the end date.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Query the database for expenses between the selected dates
+            string query = "SELECT * FROM Expenses WHERE ExpenseDate BETWEEN @StartDate AND @EndDate";
+
+            // Prepare parameters for the query
+            var parameters = new Dictionary<string, object>
+    {
+        { "@StartDate", startDate },
+        { "@EndDate", endDate }
+    };
+
+            try
+            {
+                // Use your DB class to execute the query and get the result
+                DB db = new DB();
+                DataTable dataTable = db.GetDataTableWithParameters(query, parameters);
+
+                // Bind the result to the DataGridView
+                dataGridView1.DataSource = dataTable;
+
+                // Optional: Show a message if no records are found
+                if (dataTable.Rows.Count == 0)
+                {
+                    MessageBox.Show("No expenses found for the selected date range.", "No Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

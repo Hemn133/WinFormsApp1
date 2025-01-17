@@ -20,7 +20,22 @@ namespace WinFormsApp1
         private void ProductAdmin_Load(object sender, EventArgs e)
         {
             if (_userRole == "Employee")
-                Discount.Visible = false;
+            {
+                Discount.Enabled = false;
+                button10.Enabled = false;
+                ProductName.Enabled = false;
+                button11.Enabled = false;
+                button9.Enabled = false;
+                SalePrice.Enabled = false;
+                Quantity.Enabled = false;
+                PurchasePrice.Visible = false;
+               
+
+
+            }
+                
+                
+            
 
             RefreshDataGridView();
         }
@@ -239,15 +254,31 @@ namespace WinFormsApp1
                     e.FormattingApplied = true;
                 }
             }
+
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "SellingPrice" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "Discount" && e.Value != null)
+            {
+                if (decimal.TryParse(e.Value.ToString(), out decimal value))
+                {
+                    // Format the value as a thousand separator
+                    e.Value = value.ToString("N0");
+                    e.FormattingApplied = true;
+                }
+            }
+
+
         }
+
     }
-
-
-
-
-
-
-
 
 
 }

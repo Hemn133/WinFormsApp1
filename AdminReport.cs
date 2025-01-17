@@ -15,9 +15,11 @@ namespace WinFormsApp1
 {
     public partial class AdminReport : UserControl
     {
-        public AdminReport()
+        private string _userrole;
+        public AdminReport(string userrole)
         {
             InitializeComponent();
+            _userrole = userrole;
         }
         DB db = new DB();
         private void button2_Click(object sender, EventArgs e)
@@ -143,20 +145,19 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;
                 txtTotalExpenses.Text = row["TotalExpenses"].ToString();
                 txtTotalDebtSales.Text = row["TotalDebtSales"].ToString();
                 txtTotalDebtSettlements.Text = row["TotalDebtSettlements"].ToString();
+
                 if (row["TotalCashSales"] == null || row["TotalDebtSettlements"] == null)
                 {
                     decimal netTotal = Convert.ToDecimal(row["TotalExpenses"]);
-                    txtNetTotal.Text = netTotal.ToString("C");
+                    txtNetTotal.Text = netTotal.ToString("N0"); // Show as whole number with thousands separator
                 }
                 else
                 {
                     decimal netTotal = Convert.ToDecimal(row["TotalCashSales"]) +
-                                   Convert.ToDecimal(row["TotalDebtSettlements"]) -
-                                   Convert.ToDecimal(row["TotalExpenses"]);
-                    txtNetTotal.Text = netTotal.ToString("C");
+                                       Convert.ToDecimal(row["TotalDebtSettlements"]) -
+                                       Convert.ToDecimal(row["TotalExpenses"]);
+                    txtNetTotal.Text = netTotal.ToString("N0"); // Show as whole number with thousands separator
                 }
-
-
             }
         }
 
@@ -189,10 +190,24 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;
 
         private void AdminReport_Load(object sender, EventArgs e)
         {
+
+
+            if (_userrole == "Employee")
+            {
+
+                StartDatePicker.Enabled = false;
+                EndDatePicker.Enabled = false;
+
+            }
+           
+
+
+
+
             style(dataGridViewReports);
             ReverseColumnsOrder(dataGridViewReports);
 
-           
+
         }
 
 
@@ -232,7 +247,18 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;
 
         private void txtTotalExpenses_TextChanged(object sender, EventArgs e)
         {
+            if (sender is System.Windows.Forms.TextBox textBox && !string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                // Remove any existing formatting
+                string unformattedText = textBox.Text.Replace(",", "");
 
+                if (decimal.TryParse(unformattedText, out decimal value))
+                {
+                    // Format the value with thousand separators
+                    textBox.Text = value.ToString("N0");
+                    textBox.SelectionStart = textBox.Text.Length; // Maintain caret position
+                }
+            }
         }
 
         private void dataGridViewReports_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -276,6 +302,70 @@ WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;
 
 
 
+        }
+
+        private void txtTotalCashSales_TextChanged(object sender, EventArgs e)
+        {
+            if (sender is System.Windows.Forms.TextBox textBox && !string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                // Remove any existing formatting
+                string unformattedText = textBox.Text.Replace(",", "");
+
+                if (decimal.TryParse(unformattedText, out decimal value))
+                {
+                    // Format the value with thousand separators
+                    textBox.Text = value.ToString("N0");
+                    textBox.SelectionStart = textBox.Text.Length; // Maintain caret position
+                }
+            }
+        }
+
+        private void txtTotalDebtSales_TextChanged(object sender, EventArgs e)
+        {
+            if (sender is System.Windows.Forms.TextBox textBox && !string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                // Remove any existing formatting
+                string unformattedText = textBox.Text.Replace(",", "");
+
+                if (decimal.TryParse(unformattedText, out decimal value))
+                {
+                    // Format the value with thousand separators
+                    textBox.Text = value.ToString("N0");
+                    textBox.SelectionStart = textBox.Text.Length; // Maintain caret position
+                }
+            }
+        }
+
+        private void txtTotalDebtSettlements_TextChanged(object sender, EventArgs e)
+        {
+            if (sender is System.Windows.Forms.TextBox textBox && !string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                // Remove any existing formatting
+                string unformattedText = textBox.Text.Replace(",", "");
+
+                if (decimal.TryParse(unformattedText, out decimal value))
+                {
+                    // Format the value with thousand separators
+                    textBox.Text = value.ToString("N0");
+                    textBox.SelectionStart = textBox.Text.Length; // Maintain caret position
+                }
+            }
+        }
+
+        private void txtNetTotal_TextChanged(object sender, EventArgs e)
+        {
+            if (sender is System.Windows.Forms.TextBox textBox && !string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                // Remove any existing formatting
+                string unformattedText = textBox.Text.Replace(",", "");
+
+                if (decimal.TryParse(unformattedText, out decimal value))
+                {
+                    // Format the value with thousand separators
+                    textBox.Text = value.ToString("N0");
+                    textBox.SelectionStart = textBox.Text.Length; // Maintain caret position
+                }
+            }
         }
     }
 }

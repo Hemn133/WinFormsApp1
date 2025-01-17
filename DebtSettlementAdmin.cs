@@ -14,13 +14,50 @@ namespace WinFormsApp1
 {
     public partial class DebtSettlementAdmin : UserControl
     {
-        public DebtSettlementAdmin()
+        private string _userrole;
+
+        public DebtSettlementAdmin(string userrole)
         {
             InitializeComponent();
+            _userrole = userrole;
         }
+        private void RrefreshDataGridView()
+        {
+            string query = @"
+        SELECT 
+            ds.DebtSettlementID,
+            c.CustomerID,
+            c.CustomerName, 
+            ds.AmountPaid, 
+            ds.PaymentDate
+        FROM DebtSettlement ds
+        JOIN Customer c ON ds.CustomerID = c.CustomerID";
 
+            DB db = new DB();
+            DataTable allData = db.GetDataTable(query);
+            dataGridView1.DataSource = allData;
+            dataGridView1.Columns["CustomerID"].Visible = false; // Hide the CustomerID column
+        }
         private void DebtSettlementAdmin_Load(object sender, EventArgs e)
         {
+
+            if (_userrole == "Employee")
+            {
+
+
+                DatePaid.Enabled = false;
+                button11.Enabled = false;
+
+
+
+            }
+           
+
+            // Configure the DateTimePickers (optional)
+            dateTimePicker1.Value = DateTime.Now; // Default to the last month
+            dateTimePicker2.Value = DateTime.Now;
+            RrefreshDataGridView(); // Load all data initially
+
             DB db = new DB(); // Create an instance of the DB class
 
             // Query to load customer names for the ComboBox
@@ -427,6 +464,46 @@ namespace WinFormsApp1
                 }
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // Get the selected date range
+            DateTime startDate = dateTimePicker1.Value.Date;
+            DateTime endDate = dateTimePicker2.Value.Date;
+
+            if (startDate > endDate)
+            {
+                MessageBox.Show("تکایە بەروارەکان دروست دیاری بکە.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Build the query with the date filter
+            string query = @"
+        SELECT 
+            ds.DebtSettlementID,
+            c.CustomerID,
+            c.CustomerName, 
+            ds.AmountPaid, 
+            ds.PaymentDate
+        FROM DebtSettlement ds
+        JOIN Customer c ON ds.CustomerID = c.CustomerID
+        WHERE ds.PaymentDate >= @StartDate AND ds.PaymentDate <= @EndDate";
+
+            // Pass the date range parameters
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+    {
+        { "@StartDate", startDate },
+        { "@EndDate", endDate }
+    };
+
+            DB db = new DB();
+            DataTable filteredData = db.GetDataTable(query, parameters);
+
+            // Bind the filtered data to the DataGridView
+            dataGridView1.DataSource = filteredData;
+            dataGridView1.Columns["CustomerID"].Visible = false; // Hide the CustomerID column
+        }
     }
-}
+    }
+
 

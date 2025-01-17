@@ -188,8 +188,30 @@ namespace WinFormsApp1
                 }
             }
         }
-        
 
+        public DataTable GetDataTableWithParameters(string query, Dictionary<string, object> parameters)
+        {
+            DataTable dataTable = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    // Add parameters to the command
+                    foreach (var param in parameters)
+                    {
+                        cmd.Parameters.AddWithValue(param.Key, param.Value);
+                    }
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(dataTable);
+                    }
+                }
+            }
+
+            return dataTable;
+        }
 
 
         public DataTable GetDataTable(string query)
@@ -315,6 +337,17 @@ namespace WinFormsApp1
                 connection.Open();
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        public DataTable GetProductDetailsWithDiscount(int productId)
+        {
+            string query = "SELECT ProductID, ProductName, SellingPrice, Discount, (SellingPrice - Discount) AS EffectivePrice FROM Product WHERE ProductID = @ProductID";
+            var parameters = new Dictionary<string, object>
+    {
+        { "@ProductID", productId }
+    };
+
+            return GetDataTableParam(query, parameters);
         }
 
     }

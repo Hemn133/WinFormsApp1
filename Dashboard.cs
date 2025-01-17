@@ -110,20 +110,20 @@ namespace WinFormsApp1
 
         private void button4_Click(object sender, EventArgs e)
         {
-            CustomerAdmin customerAControl = new CustomerAdmin();
+            CustomerAdmin customerAControl = new CustomerAdmin(_userRole);
 
             LoadUserControl(customerAControl);
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            DebtSettlementAdmin debtSettlementAdmin = new DebtSettlementAdmin();
+            DebtSettlementAdmin debtSettlementAdmin = new DebtSettlementAdmin(_userRole);
             LoadUserControl(debtSettlementAdmin);
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            ExpenseAdmin expenseAControl = new ExpenseAdmin();
+            ExpenseAdmin expenseAControl = new ExpenseAdmin(_userRole);
             LoadUserControl(expenseAControl);
         }
 
@@ -135,7 +135,7 @@ namespace WinFormsApp1
 
         private void button7_Click(object sender, EventArgs e)
         {
-            AdminReport adminReport = new AdminReport();
+            AdminReport adminReport = new AdminReport(_userRole);
             LoadUserControl(adminReport);
         }
 

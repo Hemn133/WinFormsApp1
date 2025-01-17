@@ -128,6 +128,7 @@
             txtTotalCashSales.Size = new Size(267, 55);
             txtTotalCashSales.TabIndex = 62;
             txtTotalCashSales.TextAlign = HorizontalAlignment.Center;
+            txtTotalCashSales.TextChanged += txtTotalCashSales_TextChanged;
             // 
             // txtTotalExpenses
             // 
@@ -151,6 +152,7 @@
             txtTotalDebtSales.Size = new Size(267, 55);
             txtTotalDebtSales.TabIndex = 64;
             txtTotalDebtSales.TextAlign = HorizontalAlignment.Center;
+            txtTotalDebtSales.TextChanged += txtTotalDebtSales_TextChanged;
             // 
             // txtTotalDebtSettlements
             // 
@@ -162,6 +164,7 @@
             txtTotalDebtSettlements.Size = new Size(267, 55);
             txtTotalDebtSettlements.TabIndex = 65;
             txtTotalDebtSettlements.TextAlign = HorizontalAlignment.Center;
+            txtTotalDebtSettlements.TextChanged += txtTotalDebtSettlements_TextChanged;
             // 
             // txtNetTotal
             // 
@@ -173,6 +176,7 @@
             txtNetTotal.Size = new Size(267, 55);
             txtNetTotal.TabIndex = 66;
             txtNetTotal.TextAlign = HorizontalAlignment.Center;
+            txtNetTotal.TextChanged += txtNetTotal_TextChanged;
             // 
             // label4
             // 
