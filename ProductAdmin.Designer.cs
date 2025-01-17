@@ -66,6 +66,7 @@
             ProductName.Name = "ProductName";
             ProductName.Size = new Size(250, 33);
             ProductName.TabIndex = 33;
+            ProductName.TextChanged += ProductName_TextChanged;
             // 
             // SalePrice
             // 
@@ -75,6 +76,7 @@
             SalePrice.Name = "SalePrice";
             SalePrice.Size = new Size(235, 33);
             SalePrice.TabIndex = 32;
+            SalePrice.TextChanged += SalePrice_TextChanged;
             // 
             // PurchasePrice
             // 
@@ -84,6 +86,7 @@
             PurchasePrice.Name = "PurchasePrice";
             PurchasePrice.Size = new Size(235, 33);
             PurchasePrice.TabIndex = 31;
+            PurchasePrice.TextChanged += PurchasePrice_TextChanged;
             PurchasePrice.KeyPress += PurchasePrice_KeyPress;
             // 
             // button10
@@ -191,6 +194,7 @@
             Quantity.Name = "Quantity";
             Quantity.Size = new Size(235, 33);
             Quantity.TabIndex = 22;
+            Quantity.TextChanged += Quantity_TextChanged;
             Quantity.KeyPress += Quantity_KeyPress;
             // 
             // label1
@@ -212,6 +216,7 @@
             Discount.Name = "Discount";
             Discount.Size = new Size(235, 33);
             Discount.TabIndex = 35;
+            Discount.TextChanged += Discount_TextChanged;
             Discount.KeyPress += textBox1_KeyPress;
             // 
             // ProductAdmin

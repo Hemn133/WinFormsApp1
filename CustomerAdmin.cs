@@ -87,6 +87,8 @@ namespace WinFormsApp1
 
         private void CustomerAdmin_Load(object sender, EventArgs e)
         {
+
+            Amount.Text = "0";
             if(_userrole == "Employee")
             {
                 CustomerName.Enabled = false;

@@ -49,7 +49,8 @@ namespace WinFormsApp1
 
                 DatePaid.Enabled = false;
                 button11.Enabled = false;
-
+                dateTimePicker1.Enabled = false;
+                dateTimePicker2.Enabled = false;
 
 
             }

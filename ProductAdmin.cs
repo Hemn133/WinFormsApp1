@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WinFormsApp1
 {
@@ -19,6 +20,7 @@ namespace WinFormsApp1
 
         private void ProductAdmin_Load(object sender, EventArgs e)
         {
+            Discount.Text = "0";
             if (_userRole == "Employee")
             {
                 Discount.Enabled = false;
@@ -29,13 +31,13 @@ namespace WinFormsApp1
                 SalePrice.Enabled = false;
                 Quantity.Enabled = false;
                 PurchasePrice.Visible = false;
-               
+
 
 
             }
-                
-                
-            
+
+
+
 
             RefreshDataGridView();
         }
@@ -278,6 +280,30 @@ namespace WinFormsApp1
 
         }
 
+        private void Discount_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void Quantity_TextChanged(object sender, EventArgs e)
+        {
+          
+        }
+
+        private void SalePrice_TextChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void PurchasePrice_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void ProductName_TextChanged(object sender, EventArgs e)
+        {
+           
+        }
     }
 
 

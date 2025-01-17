@@ -229,7 +229,7 @@ namespace WinFormsApp1
         {
             if (dataGridView2.Rows.Count == 0)
             {
-                MessageBox.Show("No items in the return list.");
+                MessageBox.Show("هیچ کاڵایەک لە لیستی گەڕانەوە نییە.");
                 return;
             }
 
@@ -240,13 +240,13 @@ namespace WinFormsApp1
                 // Validate SaleID
                 if (string.IsNullOrWhiteSpace(ExpenseAmount.Text))
                 {
-                    MessageBox.Show("Sale ID cannot be empty.");
+                    MessageBox.Show("کۆدی پسوڵە داخڵ بکە.");
                     return;
                 }
 
                 if (!int.TryParse(ExpenseAmount.Text, out int saleID))
                 {
-                    MessageBox.Show("Invalid Sale ID. Please enter a valid number.");
+                    MessageBox.Show("کۆدی پسوڵە هەڵەیە.");
                     return;
                 }
 
@@ -357,7 +357,7 @@ namespace WinFormsApp1
                     db.ExecuteWithParameters(updateCustomerDebtQuery, customerDebtParams);
                 }
 
-                MessageBox.Show("The selected items have been returned successfully.");
+                MessageBox.Show("کاڵا دیاریکراوەکان بە سەرکەوتویی گەڕانەوە.");
                 dataGridView2.Rows.Clear(); // Clear the return list after processing
             }
             catch (Exception ex)
@@ -370,7 +370,7 @@ namespace WinFormsApp1
         {
             // Display a confirmation dialog
             DialogResult result = MessageBox.Show(
-                "Are you sure you want to process this return? This action cannot be undone.",
+                "دڵنیای لە گەڕانەوەی پسوڵە؟.",
                 "Confirm Return",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning
@@ -382,61 +382,87 @@ namespace WinFormsApp1
                 int saleID = Convert.ToInt32(ExpenseAmount.Text); // Replace with your SaleID input field
 
                 string getSalesDetailsQuery = @"
-        SELECT ProductID, Quantity 
-        FROM SalesDetails
-        WHERE SaleID = @SaleID;";
+SELECT ProductID, Quantity 
+FROM SalesDetails
+WHERE SaleID = @SaleID;";
 
                 string updateSalesDetailsQuery = @"
-        UPDATE SalesDetails
-        SET 
-            ReturnedQuantity = Quantity,
-            Quantity = 0,
-            Subtotal = 0
-        WHERE 
-            SaleID = @SaleID;";
+UPDATE SalesDetails
+SET 
+    ReturnedQuantity = Quantity,
+    Quantity = 0,
+    Subtotal = 0
+WHERE 
+    SaleID = @SaleID;";
 
                 string updateProductStockQuery = @"
-        UPDATE Product
-        SET 
-            QuantityAvailable = QuantityAvailable + @ReturnedQuantity
-        WHERE 
-            ProductID = @ProductID;";
+UPDATE Product
+SET 
+    QuantityAvailable = QuantityAvailable + @ReturnedQuantity
+WHERE 
+    ProductID = @ProductID;";
 
                 string updateSalesQuery = @"
-        UPDATE Sales
-        SET 
-            IsReturned = 1,
-            TotalAmount = 0
-        WHERE 
-            SaleID = @SaleID;";
+UPDATE Sales
+SET 
+    IsReturned = 1,
+    TotalAmount = 0
+WHERE 
+    SaleID = @SaleID;";
 
                 DB db = new DB();
 
                 try
                 {
-                    string getSalesDetailsQueryy = @"
-    SELECT SalesDetailID, ProductID, Quantity, Subtotal 
-    FROM SalesDetails 
-    WHERE SaleID = @SaleID";
-
+                    // Fetch the Sale details
                     DataTable salesDetails;
-
                     using (SqlDataReader reader = db.ExecuteReader(getSalesDetailsQuery, new Dictionary<string, object>
             {
                 { "@SaleID", saleID }
             }))
                     {
-                        // Create and populate the DataTable
                         salesDetails = new DataTable();
                         salesDetails.Load(reader);
                     }
 
-                    // Update Product stock for each item in the Sale
+                    // Get sale's credit status and customerID
+                    string checkCreditQuery = "SELECT IsCredit, CustomerID FROM Sales WHERE SaleID = @SaleID";
+                    var creditParams = new Dictionary<string, object> { { "@SaleID", saleID } };
+                    var creditData = db.ExecuteReader(checkCreditQuery, creditParams);
+
+                    if (!creditData.Read())
+                    {
+                        MessageBox.Show("Sale ID not found.");
+                        return;
+                    }
+
+                    bool isCredit = Convert.ToBoolean(creditData["IsCredit"]);
+                    int customerID = isCredit ? Convert.ToInt32(creditData["CustomerID"]) : 0;
+
+                    decimal totalRefundAmount = 0;  // Initialize refund amount
+
+                    // Update Product stock for each item in the Sale and calculate refund amount
                     foreach (DataRow row in salesDetails.Rows)
                     {
                         int productID = Convert.ToInt32(row["ProductID"]);
                         int quantity = Convert.ToInt32(row["Quantity"]);
 
+                        // Fetch the selling price from the Product table
+                        string querySellingPrice = "SELECT SellingPrice FROM Product WHERE ProductID = @ProductID";
+                        var priceParams = new Dictionary<string, object> { { "@ProductID", productID } };
+                        object sellingPriceObj = db.ExecuteScalar(querySellingPrice, priceParams);
+
+                        if (sellingPriceObj == null)
+                        {
+                            MessageBox.Show("Selling price not found for the product.");
+                            return;
+                        }
+
+                        decimal sellingPrice = Convert.ToDecimal(sellingPriceObj);
+                        decimal refundAmount = quantity * sellingPrice;
+                        totalRefundAmount += refundAmount;  // Accumulate refund amount
+
+                        // Update Product stock for the returned items
                         db.ExecuteNonQuery(updateProductStockQuery, new Dictionary<string, object>
                 {
                     { "@ProductID", productID },
@@ -456,7 +482,25 @@ namespace WinFormsApp1
                 { "@SaleID", saleID }
             });
 
-                    MessageBox.Show("گەڕانەوەی پسوڵە سەرکەوتوبوو.");
+                    // If the sale was on credit, update the customer debt
+                    if (isCredit)
+                    {
+                        // Update the Customer debt
+                        string updateCustomerDebtQuery = @"
+UPDATE Customer
+SET TotalDebt = TotalDebt - @ReducedAmount
+WHERE CustomerID = @CustomerID";
+
+                        var customerDebtParams = new Dictionary<string, object>
+                {
+                    { "@ReducedAmount", totalRefundAmount },
+                    { "@CustomerID", customerID }
+                };
+
+                        db.ExecuteWithParameters(updateCustomerDebtQuery, customerDebtParams);
+                    }
+
+                    MessageBox.Show("پسوڵە بە سەرکەوتویی گەڕایەوە.");
                 }
                 catch (Exception ex)
                 {
@@ -466,7 +510,6 @@ namespace WinFormsApp1
             else
             {
                 // If the user clicks "No," do nothing or show a message if needed.
-                
             }
         }
 
