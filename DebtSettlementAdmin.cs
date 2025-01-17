@@ -15,11 +15,13 @@ namespace WinFormsApp1
     public partial class DebtSettlementAdmin : UserControl
     {
         private string _userrole;
+        private string _userAccountID; // Store the logged-in user's UserAccountID
 
         public DebtSettlementAdmin(string userrole)
         {
             InitializeComponent();
             _userrole = userrole;
+          
         }
         private void RrefreshDataGridView()
         {
@@ -70,13 +72,15 @@ namespace WinFormsApp1
             // Query to load the debt settlement data into the DataGridView
             string settlementQuery = @"
     SELECT 
-        ds.DebtSettlementID,      -- From DebtSettlement
-        c.CustomerID,             -- From Customer
-        c.CustomerName,           -- From Customer
-        ds.AmountPaid,            -- From DebtSettlement
-        ds.PaymentDate            -- From DebtSettlement
-    FROM DebtSettlement ds
-    JOIN Customer c ON ds.CustomerID = c.CustomerID";
+    ds.DebtSettlementID,
+    c.CustomerID,           -- Include CustomerID explicitly
+    c.CustomerName,
+    ds.AmountPaid,
+    ds.PaymentDate,
+    ua.Username AS SettledBy -- Include SettledBy for username
+FROM DebtSettlement ds
+JOIN Customer c ON ds.CustomerID = c.CustomerID
+JOIN UserAccount ua ON ds.UserAccountID = ua.UserAccountID;"; // Join UserAccount table
 
             DataTable settlementData = db.GetDataTable(settlementQuery);
             dataGridView1.DataSource = settlementData; // Bind the data to the DataGridView
@@ -85,6 +89,7 @@ namespace WinFormsApp1
             dataGridView1.Columns["CustomerName"].HeaderText = "ناوی خاوەن قەرز";  // Renaming column to "Customer Name"
             dataGridView1.Columns["AmountPaid"].HeaderText = "بڕی پارەدان";  // Renaming column to "Amount Paid"
             dataGridView1.Columns["PaymentDate"].HeaderText = "بەرواری پارەدان";  // Renaming column to "Payment Date"
+            dataGridView1.Columns["SettledBy"].HeaderText = "وەرگیراوە لەلایەن";  // Rename column to "Settled By
             dataGridView1.Columns["DebtSettlementID"].Visible = false;
             dataGridView1.Columns["CustomerID"].Visible = false; // Hide the column
 
@@ -170,10 +175,11 @@ namespace WinFormsApp1
                 }
 
                 // 3. Insert into the DebtSettlement table
-                string insertQuery = "INSERT INTO DebtSettlement (CustomerID, UserAccountID, AmountPaid, PaymentDate) VALUES (@CustomerID, 1, @Amount, @SettlementDate)";
+                string insertQuery = "INSERT INTO DebtSettlement (CustomerID, UserAccountID, AmountPaid, PaymentDate) VALUES (@CustomerID, @UserAccountID, @Amount, @SettlementDate)";
                 Dictionary<string, object> insertParams = new Dictionary<string, object>
         {
             { "@CustomerID", customerId },
+            { "@UserAccountID", _userAccountID },  // Use the stored UserAccountID here
             { "@Amount", amountPaid },
             { "@SettlementDate", DatePaid.Value }
         };
@@ -195,18 +201,25 @@ namespace WinFormsApp1
 
                 // 5. Refresh DataGridView
                 string settlementQuery = @"
-            SELECT 
-                ds.DebtSettlementID,
-                c.CustomerName, 
-                c.CustomerID,
-                ds.AmountPaid, 
-                ds.PaymentDate 
-            FROM DebtSettlement ds
-            JOIN Customer c ON ds.CustomerID = c.CustomerID";
+        SELECT 
+            ds.DebtSettlementID,      -- Debt Settlement ID
+            c.CustomerID,             -- Customer ID
+            c.CustomerName,           -- Customer Name
+            ds.AmountPaid,            -- Amount Paid
+            ds.PaymentDate,           -- Payment Date
+            ua.Username AS SettledBy  -- Username from UserAccount (SettledBy)
+        FROM DebtSettlement ds
+        JOIN Customer c ON ds.CustomerID = c.CustomerID
+        JOIN UserAccount ua ON ds.UserAccountID = ua.UserAccountID"; // Join UserAccount table
 
                 DataTable settlementData = db.GetDataTable(settlementQuery);
                 dataGridView1.DataSource = settlementData;
-                dataGridView1.Columns["CustomerID"].Visible = false;
+
+                // Check if the column exists before trying to hide it
+                if (dataGridView1.Columns.Contains("CustomerID"))
+                {
+                    dataGridView1.Columns["CustomerID"].Visible = false; // Hide the CustomerID column
+                }
             }
             catch (Exception ex)
             {
@@ -477,17 +490,19 @@ namespace WinFormsApp1
                 return;
             }
 
-            // Build the query with the date filter
+            // Build the query with the date filter and include SettledBy
             string query = @"
-        SELECT 
-            ds.DebtSettlementID,
-            c.CustomerID,
-            c.CustomerName, 
-            ds.AmountPaid, 
-            ds.PaymentDate
-        FROM DebtSettlement ds
-        JOIN Customer c ON ds.CustomerID = c.CustomerID
-        WHERE ds.PaymentDate >= @StartDate AND ds.PaymentDate <= @EndDate";
+    SELECT 
+        ds.DebtSettlementID,
+        c.CustomerID,
+        c.CustomerName, 
+        ds.AmountPaid, 
+        ds.PaymentDate,
+        ua.Username AS SettledBy -- Include SettledBy
+    FROM DebtSettlement ds
+    JOIN Customer c ON ds.CustomerID = c.CustomerID
+    JOIN UserAccount ua ON ds.UserAccountID = ua.UserAccountID
+    WHERE ds.PaymentDate >= @StartDate AND ds.PaymentDate <= @EndDate";
 
             // Pass the date range parameters
             Dictionary<string, object> parameters = new Dictionary<string, object>
@@ -501,6 +516,12 @@ namespace WinFormsApp1
 
             // Bind the filtered data to the DataGridView
             dataGridView1.DataSource = filteredData;
+
+            // Ensure that SettledBy column is available and rename the column
+            if (dataGridView1.Columns["SettledBy"] != null)
+            {
+                dataGridView1.Columns["SettledBy"].HeaderText = "بەکارهێنەر"; // Rename the column header to "Settled By"
+            }
             dataGridView1.Columns["CustomerID"].Visible = false; // Hide the CustomerID column
         }
     }

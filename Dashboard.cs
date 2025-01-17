@@ -15,11 +15,14 @@ namespace WinFormsApp1
     public partial class AdminDashboard : Form
     {
         public string _userRole;
+       
 
         public AdminDashboard(string userRole)
         {
             InitializeComponent();
             _userRole = userRole;
+           
+
         }
         private void LoadUserControl(UserControl newControl)
         {
