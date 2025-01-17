@@ -35,8 +35,6 @@
             ExpenseAmount = new TextBox();
             label3 = new Label();
             button2 = new Button();
-            ProductSelection = new ComboBox();
-            label1 = new Label();
             numericUpDown1 = new NumericUpDown();
             label2 = new Label();
             addtolist = new Button();
@@ -73,6 +71,7 @@
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(1610, 227);
             dataGridView1.TabIndex = 51;
+            dataGridView1.SelectionChanged += dataGridView1_SelectionChanged;
             // 
             // button1
             // 
@@ -134,45 +133,23 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // ProductSelection
-            // 
-            ProductSelection.AutoCompleteMode = AutoCompleteMode.Suggest;
-            ProductSelection.AutoCompleteSource = AutoCompleteSource.ListItems;
-            ProductSelection.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            ProductSelection.FormattingEnabled = true;
-            ProductSelection.Location = new Point(1378, 405);
-            ProductSelection.Name = "ProductSelection";
-            ProductSelection.Size = new Size(235, 33);
-            ProductSelection.TabIndex = 59;
-            ProductSelection.SelectedIndexChanged += ProductSelection_SelectedIndexChanged;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.Teal;
-            label1.Location = new Point(1559, 363);
-            label1.Name = "label1";
-            label1.Size = new Size(54, 39);
-            label1.TabIndex = 60;
-            label1.Text = "کاڵا";
-            // 
             // numericUpDown1
             // 
             numericUpDown1.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            numericUpDown1.Location = new Point(1271, 405);
+            numericUpDown1.Location = new Point(1511, 405);
             numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(101, 33);
             numericUpDown1.TabIndex = 62;
             numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
             // 
             // label2
             // 
             label2.AutoSize = true;
             label2.Font = new Font("NRT Bold", 20.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label2.ForeColor = Color.Teal;
-            label2.Location = new Point(1314, 363);
+            label2.Location = new Point(1553, 363);
             label2.Name = "label2";
             label2.Size = new Size(58, 39);
             label2.TabIndex = 61;
@@ -182,7 +159,7 @@
             // 
             addtolist.Font = new Font("NRT Bold", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             addtolist.ForeColor = Color.Teal;
-            addtolist.Location = new Point(1115, 405);
+            addtolist.Location = new Point(1355, 405);
             addtolist.Name = "addtolist";
             addtolist.Size = new Size(150, 33);
             addtolist.TabIndex = 63;
@@ -223,8 +200,6 @@
             Controls.Add(addtolist);
             Controls.Add(numericUpDown1);
             Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(ProductSelection);
             Controls.Add(button2);
             Controls.Add(ExpenseAmount);
             Controls.Add(label3);
@@ -251,8 +226,6 @@
         private TextBox ExpenseAmount;
         private Label label3;
         private Button button2;
-        private ComboBox ProductSelection;
-        private Label label1;
         private NumericUpDown numericUpDown1;
         private Label label2;
         private Button addtolist;

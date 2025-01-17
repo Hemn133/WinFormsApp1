@@ -293,19 +293,6 @@ namespace WinFormsApp1
             return false; // Product does not exist
         }
 
-        private void AddProductToGridView(string productId, string productName, int quantity, decimal unitPrice)
-        {
-            // Check if the product already exists
-            if (IsProductAlreadyAdded(productId))
-            {
-                MessageBox.Show("This product is already added to the list.", "Duplicate Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Add the product to the DataGridView
-            dataGridView1.Rows.Add(productId, productName, quantity, unitPrice, quantity * unitPrice);
-        }
-
         private void addtolist_Click(object sender, EventArgs e)
         {
 
@@ -462,13 +449,14 @@ namespace WinFormsApp1
                         int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
                         int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
                         decimal subtotal = Convert.ToDecimal(row.Cells["TotalPrice"].Value);
-
-                        string insertDetailQuery = "INSERT INTO SalesDetails (SaleID, ProductID, Quantity, Subtotal) VALUES (@SaleID, @ProductID, @Quantity, @Subtotal)";
+                        int Rquantity = quantity * -1;
+                        string insertDetailQuery = "INSERT INTO SalesDetails (SaleID, ProductID, Quantity, Subtotal, ReturnedQuantity) VALUES (@SaleID, @ProductID, @Quantity, @Subtotal,@ReturnedQuantity)";
                         SqlCommand cmdDetail = new SqlCommand(insertDetailQuery, conn, transaction);
                         cmdDetail.Parameters.AddWithValue("@SaleID", saleID);
                         cmdDetail.Parameters.AddWithValue("@ProductID", productID);
                         cmdDetail.Parameters.AddWithValue("@Quantity", quantity);
                         cmdDetail.Parameters.AddWithValue("@Subtotal", subtotal);
+                        cmdDetail.Parameters.AddWithValue("@ReturnedQuantity", Rquantity);
                         cmdDetail.ExecuteNonQuery();
 
                         // Update Product quantity

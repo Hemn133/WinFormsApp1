@@ -74,75 +74,9 @@ namespace WinFormsApp1
             else
             {
                 MessageBox.Show("ئەم کۆدە بوونی نییە.");
+
             }
         }
-
-        private void ProcessReturn(int saleId, string productName, int returnQuantity)
-        {
-            // Get ProductID based on ProductName
-            string queryProductID = "SELECT ProductID FROM Product WHERE ProductName = @ProductName";
-            Dictionary<string, object> parametersProduct = new Dictionary<string, object>
-    {
-        { "@ProductName", productName }
-    };
-
-            DB db = new DB();
-            object productIdObj = db.ExecuteScalar(queryProductID, parametersProduct);
-
-            if (productIdObj == null)
-            {
-                MessageBox.Show("کاڵا نەدۆزرایەوە.");
-                return;
-            }
-
-            int productId = Convert.ToInt32(productIdObj);
-
-            // Update the SaleDetails table for the return
-            string updateQuery = @"
-        UPDATE SaleDetails
-        SET ReturnedQuantity = ReturnedQuantity + @ReturnQuantity
-        WHERE SaleID = @SaleID AND ProductID = @ProductID";
-
-            Dictionary<string, object> updateParameters = new Dictionary<string, object>
-    {
-        { "@ReturnQuantity", returnQuantity },
-        { "@SaleID", saleId },
-        { "@ProductID", productId }
-    };
-
-            db.ExecuteWithParameters(updateQuery, updateParameters);
-
-            MessageBox.Show("گەڕانەوەی کاڵا سەرکەوتوبوو");
-
-            // Reload the updated sale details
-            LoadSaleDetails(saleId);
-
-            // Check if all products are fully returned
-            string checkQuery = @"
-        SELECT SUM(Quantity - ReturnedQuantity) AS RemainingQuantity
-        FROM SaleDetails
-        WHERE SaleID = @SaleID";
-
-            Dictionary<string, object> checkParameters = new Dictionary<string, object>
-    {
-        { "@SaleID", saleId }
-    };
-
-            object remainingQuantityObj = db.ExecuteScalar(checkQuery, checkParameters);
-            int remainingQuantity = remainingQuantityObj != null ? Convert.ToInt32(remainingQuantityObj) : 0;
-
-            if (remainingQuantity == 0)
-            {
-                // Mark Sale as fully returned
-                string markReturnedQuery = "UPDATE Sales SET IsReturned = 1 WHERE SaleID = @SaleID";
-                db.ExecuteWithParameters(markReturnedQuery, checkParameters);
-                MessageBox.Show("گەڕانەوەی پسوڵە سەرکەوتوبوو.");
-            }
-        }
-
-
-
-
         private void LoadSaleDetails(int saleId)
         {
             string query = @"
@@ -171,11 +105,11 @@ namespace WinFormsApp1
                 dataGridView1.Columns["ReturnedQuantity"].HeaderText = "ژمارەی کاڵای گەڕاوە";
 
                 // Populate ComboBox with product names
-                ProductSelection.Items.Clear();
-                foreach (DataRow row in saleDetails.Rows)
-                {
-                    ProductSelection.Items.Add(row["ProductName"].ToString());
-                }
+                //ProductSelection.Items.Clear();
+                //foreach (DataRow row in saleDetails.Rows)
+                //{
+                //    ProductSelection.Items.Add(row["ProductName"].ToString());
+                //}
             }
             else
             {
@@ -308,9 +242,20 @@ namespace WinFormsApp1
             { "@SaleID", saleID },
             { "@ProductID", productID }
         };
+                   
 
                     db.ExecuteWithParameters(updateSaleDetailsQuery, saleDetailsParams);
 
+                    string updateSalesQuery1 = @"
+UPDATE Sales
+SET 
+    IsReturned = 1
+WHERE 
+    SaleID = @SaleID;";
+                    db.ExecuteNonQuery(updateSalesQuery1, new Dictionary<string, object>
+            {
+                { "@SaleID", saleID }
+            });
                     // Update the Product table to increase stock
                     string updateStockQuery = @"
             UPDATE Product 
@@ -523,21 +468,21 @@ WHERE CustomerID = @CustomerID";
             }
         }
 
-        private void ProductSelection_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string selectedProduct = ProductSelection.SelectedItem.ToString();
+        //private void ProductSelection_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    string selectedProduct = ProductSelection.SelectedItem.ToString();
 
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                if (row.Cells["ProductName"].Value != null && row.Cells["ProductName"].Value.ToString() == selectedProduct)
-                {
-                    int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
-                    numericUpDown1.Maximum = quantity > 0 ? quantity : 1; // Prevents setting 0 as the max
-                    numericUpDown1.Value = 1; // Reset value to 1 when selection changes
-                    break;
-                }
-            }
-        }
+        //    foreach (DataGridViewRow row in dataGridView1.Rows)
+        //    {
+        //        if (row.Cells["ProductName"].Value != null && row.Cells["ProductName"].Value.ToString() == selectedProduct)
+        //        {
+        //            int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+        //            numericUpDown1.Maximum = quantity > 0 ? quantity : 1; // Prevents setting 0 as the max
+        //            numericUpDown1.Value = 1; // Reset value to 1 when selection changes
+        //            break;
+        //        }
+        //    }
+        //}
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -550,6 +495,26 @@ WHERE CustomerID = @CustomerID";
 
             MessageBox.Show("DataGridView has been cleared.");
 
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                // Assuming "Quantity" is the name of the column
+                var selectedRow = dataGridView1.SelectedRows[0];
+                if (int.TryParse(selectedRow.Cells["Quantity"].Value?.ToString(), out int quantity))
+                {
+                    numericUpDown1.Minimum = 1;
+                    numericUpDown1.Maximum = quantity > 1 ? quantity : 1;
+                    numericUpDown1.Value = 1;
+                }
+            }
         }
     }
 

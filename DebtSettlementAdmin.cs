@@ -15,13 +15,18 @@ namespace WinFormsApp1
     public partial class DebtSettlementAdmin : UserControl
     {
         private string _userrole;
-        private string _userAccountID; // Store the logged-in user's UserAccountID
+        private int currentUserID; // Store the logged-in user's UserAccountID
 
         public DebtSettlementAdmin(string userrole)
         {
             InitializeComponent();
             _userrole = userrole;
-          
+            if (userrole == "Admin")
+            {
+                currentUserID = 1;
+            }
+            else { currentUserID = 2; }
+
         }
         private void RrefreshDataGridView()
         {
@@ -180,7 +185,7 @@ JOIN UserAccount ua ON ds.UserAccountID = ua.UserAccountID;"; // Join UserAccoun
                 Dictionary<string, object> insertParams = new Dictionary<string, object>
         {
             { "@CustomerID", customerId },
-            { "@UserAccountID", _userAccountID },  // Use the stored UserAccountID here
+            { "@UserAccountID", currentUserID },  // Use the stored UserAccountID here
             { "@Amount", amountPaid },
             { "@SettlementDate", DatePaid.Value }
         };
