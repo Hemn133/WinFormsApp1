@@ -80,7 +80,7 @@ namespace WinFormsApp1
         private void LoadSaleDetails(int saleId)
         {
             string query = @"
-    SELECT sd.ProductID, p.ProductName, sd.Quantity, sd.ReturnedQuantity 
+    SELECT sd.ProductID, p.ProductName, sd.Quantity,sd.Subtotal, sd.ReturnedQuantity 
     FROM SalesDetails sd
     JOIN Product p ON sd.ProductID = p.ProductID
     WHERE sd.SaleID = @SaleID AND (sd.Quantity - sd.ReturnedQuantity) > 0";
@@ -99,11 +99,12 @@ namespace WinFormsApp1
                 dataGridView1.DataSource = saleDetails;
 
                 // Rename DataGridView column headers
-                dataGridView1.Columns["ProductID"].HeaderText = "کۆدی کاڵا";
+                dataGridView1.Columns["ProductID"].Visible = false;
+                dataGridView1.Columns["Subtotal"].HeaderText = "کۆی گشتی";
                 dataGridView1.Columns["ProductName"].HeaderText = "ناوی کاڵا";
                 dataGridView1.Columns["Quantity"].HeaderText = "دانە";
-                dataGridView1.Columns["ReturnedQuantity"].HeaderText = "ژمارەی کاڵای گەڕاوە";
-
+                //dataGridView1.Columns["ReturnedQuantity"].HeaderText = "ژمارەی کاڵای گەڕاوە";
+                dataGridView1.Columns["ReturnedQuantity"].Visible = false;
                 // Populate ComboBox with product names
                 //ProductSelection.Items.Clear();
                 //foreach (DataRow row in saleDetails.Rows)
@@ -212,18 +213,21 @@ namespace WinFormsApp1
                     int returnQuantity = Convert.ToInt32(row.Cells["Quantity"].Value);
 
                     // Fetch selling price
-                    string querySellingPrice = "SELECT SellingPrice FROM Product WHERE ProductID = @ProductID";
+                    string querySellingPrice = "SELECT SellingPrice, Discount FROM Product WHERE ProductID = @ProductID";
                     var priceParams = new Dictionary<string, object> { { "@ProductID", productID } };
-                    object sellingPriceObj = db.ExecuteScalar(querySellingPrice, priceParams);
+                    var priceData = db.ExecuteReader(querySellingPrice, priceParams);
 
-                    if (sellingPriceObj == null)
+                    if (!priceData.Read())
                     {
                         MessageBox.Show("Selling price not found for the product.");
                         return;
                     }
 
-                    decimal sellingPrice = Convert.ToDecimal(sellingPriceObj);
-                    decimal refundAmount = returnQuantity * sellingPrice;
+                    decimal sellingPrice = Convert.ToDecimal(priceData["SellingPrice"]);
+                    decimal discount = Convert.ToDecimal(priceData["Discount"]);
+                    decimal finalPrice = sellingPrice - discount;
+
+                    decimal refundAmount = returnQuantity * finalPrice;
                     totalRefundAmount += refundAmount;
 
                     // Update the SaleDetails table
@@ -303,6 +307,7 @@ WHERE
                 }
 
                 MessageBox.Show("کاڵا دیاریکراوەکان بە سەرکەوتویی گەڕانەوە.");
+                button2.PerformClick();
                 dataGridView2.Rows.Clear(); // Clear the return list after processing
             }
             catch (Exception ex)
@@ -446,6 +451,8 @@ WHERE CustomerID = @CustomerID";
                     }
 
                     MessageBox.Show("پسوڵە بە سەرکەوتویی گەڕایەوە.");
+                    dataGridView1.DataSource = null;
+                    dataGridView1.Rows.Clear();
                 }
                 catch (Exception ex)
                 {

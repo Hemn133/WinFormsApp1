@@ -74,7 +74,7 @@
             ProductSelection.Location = new Point(1378, 154);
             ProductSelection.Name = "ProductSelection";
             ProductSelection.Size = new Size(235, 33);
-            ProductSelection.TabIndex = 38;
+            ProductSelection.TabIndex = 0;
             ProductSelection.SelectedIndexChanged += ProductSelection_SelectedIndexChanged;
             // 
             // addtolist
@@ -84,7 +84,7 @@
             addtolist.Location = new Point(1126, 154);
             addtolist.Name = "addtolist";
             addtolist.Size = new Size(139, 33);
-            addtolist.TabIndex = 40;
+            addtolist.TabIndex = 2;
             addtolist.Text = "زیادکردن بۆ پسوڵە";
             addtolist.UseVisualStyleBackColor = true;
             addtolist.Click += addtolist_Click;
@@ -112,7 +112,7 @@
             isdebt.Location = new Point(1551, 193);
             isdebt.Name = "isdebt";
             isdebt.Size = new Size(62, 31);
-            isdebt.TabIndex = 42;
+            isdebt.TabIndex = 3;
             isdebt.Text = "قەرز";
             isdebt.UseVisualStyleBackColor = true;
             isdebt.CheckedChanged += isdebt_CheckedChanged;
@@ -124,7 +124,7 @@
             save.Location = new Point(1126, 227);
             save.Name = "save";
             save.Size = new Size(487, 34);
-            save.TabIndex = 43;
+            save.TabIndex = 5;
             save.Text = "فرۆشتن";
             save.UseVisualStyleBackColor = true;
             save.Click += save_Click;
@@ -177,6 +177,7 @@
             comboBox1.Enabled = false;
             comboBox1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBox1.FormattingEnabled = true;
+            comboBox1.ItemHeight = 21;
             comboBox1.Location = new Point(1126, 192);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(235, 29);
@@ -200,7 +201,7 @@
             numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(101, 33);
-            numericUpDown1.TabIndex = 52;
+            numericUpDown1.TabIndex = 1;
             numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // button1
@@ -210,7 +211,7 @@
             button1.Location = new Point(1126, 987);
             button1.Name = "button1";
             button1.Size = new Size(139, 33);
-            button1.TabIndex = 53;
+            button1.TabIndex = 6;
             button1.Text = "سڕینەوە";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
@@ -252,7 +253,7 @@
             dateTimePicker1.Location = new Point(342, 232);
             dateTimePicker1.Name = "dateTimePicker1";
             dateTimePicker1.Size = new Size(200, 33);
-            dateTimePicker1.TabIndex = 56;
+            dateTimePicker1.TabIndex = 7;
             // 
             // dateTimePicker2
             // 
@@ -262,7 +263,7 @@
             dateTimePicker2.Location = new Point(99, 232);
             dateTimePicker2.Name = "dateTimePicker2";
             dateTimePicker2.Size = new Size(200, 33);
-            dateTimePicker2.TabIndex = 57;
+            dateTimePicker2.TabIndex = 8;
             // 
             // label6
             // 
@@ -282,7 +283,7 @@
             button2.Location = new Point(3, 231);
             button2.Name = "button2";
             button2.Size = new Size(90, 34);
-            button2.TabIndex = 59;
+            button2.TabIndex = 9;
             button2.Text = "گەڕان";
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;

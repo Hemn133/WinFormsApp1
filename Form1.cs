@@ -21,7 +21,7 @@ namespace WinFormsApp1
 
         private void label1_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Application.Exit();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -94,12 +94,29 @@ namespace WinFormsApp1
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked) {
-            
-            Password.UseSystemPasswordChar = true;
-            } else {Password.UseSystemPasswordChar= false; }
+            if (checkBox1.Checked)
+            {
+
+                Password.UseSystemPasswordChar = true;
+            }
+            else { Password.UseSystemPasswordChar = false; }
 
 
+        }
+
+        private void Password_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Password_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button1.PerformClick();
+                e.Handled = true;  // Prevents beep sound
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

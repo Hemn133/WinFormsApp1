@@ -107,23 +107,21 @@ ORDER BY dt.[Date];
         SELECT 
     ISNULL(SUM(CASE WHEN s.IsCredit = 0 THEN s.TotalAmount ELSE 0 END), 0) AS TotalCashSales,
     ISNULL(SUM(CASE WHEN s.IsCredit = 1 THEN s.TotalAmount ELSE 0 END), 0) AS TotalDebtSales,
-    ISNULL(SUM(ds.TotalDebtSettled), 0) AS TotalDebtSettlements,
     ISNULL(
         (
-            SELECT ISNULL(SUM(Amount), 0)
+            SELECT SUM(AmountPaid)
+            FROM DebtSettlement
+            WHERE CONVERT(DATE, PaymentDate) BETWEEN @StartDate AND @EndDate
+        ), 0
+    ) AS TotalDebtSettlements,
+    ISNULL(
+        (
+            SELECT SUM(Amount)
             FROM Expenses
             WHERE CONVERT(DATE, ExpenseDate) BETWEEN @StartDate AND @EndDate
         ), 0
     ) AS TotalExpenses
 FROM Sales s
-LEFT JOIN (
-    SELECT 
-        CONVERT(DATE, PaymentDate) AS PaymentDate, 
-        SUM(AmountPaid) AS TotalDebtSettled
-    FROM DebtSettlement
-    WHERE PaymentDate BETWEEN @StartDate AND @EndDate
-    GROUP BY CONVERT(DATE, PaymentDate)
-) ds ON CONVERT(DATE, s.SaleDate) = ds.PaymentDate
 WHERE s.SaleDate BETWEEN @StartDate AND @EndDate;
 ";
 

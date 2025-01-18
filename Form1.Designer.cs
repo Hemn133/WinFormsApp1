@@ -106,6 +106,8 @@
             Password.PasswordChar = '•';
             Password.Size = new Size(187, 55);
             Password.TabIndex = 5;
+            Password.TextChanged += Password_TextChanged;
+            Password.KeyDown += Password_KeyDown;
             // 
             // button1
             // 

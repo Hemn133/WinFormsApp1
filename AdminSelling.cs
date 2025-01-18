@@ -422,6 +422,7 @@ namespace WinFormsApp1
                     }
 
                     // Determine customer ID if sale is on credit
+                    
                     string customerID = isdebt.Checked ? comboBox1.SelectedValue.ToString() : null;
                     bool isCredit = isdebt.Checked;
 
@@ -539,6 +540,7 @@ namespace WinFormsApp1
 
         private void isdebt_CheckedChanged(object sender, EventArgs e)
         {
+            comboBox1.SelectedIndex = 0;
             comboBox1.Enabled = isdebt.Checked;
         }
 
