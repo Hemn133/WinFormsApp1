@@ -596,7 +596,9 @@ namespace WinFormsApp1
             {
                 try
                 {
-                    MessageBox.Show("Printed");
+                    int saleID = Convert.ToInt32(dataGridView2.Rows[e.RowIndex].Cells["SaleID"].Value);
+                    receipt receipt = new receipt(saleID);
+                    receipt.Show();
                 }
                 catch (Exception ex)
                 {
